@@ -1,30 +1,48 @@
 <template>
-  <div class="font-sans antialiased">
-    <header class="bg-blue-600 text-white p-4 shadow-md">
-      <div class="container mx-auto flex justify-between items-center">
-        <NuxtLink to="/" class="text-2xl font-bold">Booking Ruangan</NuxtLink>
-        <nav>
-          <ul class="flex space-x-4">
-            <li><NuxtLink to="/" class="hover:underline">Beranda</NuxtLink></li>
-            <li><NuxtLink to="/auth/login" class="hover:underline">Login</NuxtLink></li>
-            </ul>
-        </nav>
-      </div>
-    </header>
+  <div class="flex min-h-screen">
+    <AppSidebar />
 
-    <main>
-      <Nuxt />
-    </main>
+    <div :class="{ 'ml-64': isSidebarOpen, 'ml-20': !isSidebarOpen }" class="flex-grow transition-all duration-300 ease-in-out">
+      <header class="bg-white p-4 shadow-sm border-b">
+        <div class="container mx-auto">
+          <h1 class="text-xl font-semibold text-gray-800">
+            {{ $route.meta && $route.meta.title ? $route.meta.title : 'Dashboard' }}
+          </h1>
+        </div>
+      </header>
 
-    <footer class="bg-gray-800 text-white p-4 text-center mt-8">
-      <p>&copy; {{ new Date().getFullYear() }} Aplikasi Booking Ruangan. All rights reserved.</p>
-    </footer>
+      <main class="p-4">
+        <Nuxt />
+      </main>
+
+      <footer class="bg-gray-100 text-gray-600 p-4 text-center mt-auto border-t">
+        <p>
+          &copy; {{ new Date().getFullYear() }} Aplikasi Booking Ruangan.
+        </p>
+      </footer>
+    </div>
   </div>
 </template>
 
 <script>
+import AppSidebar from '~/components/common/AppSidebar.vue'; // Import komponen sidebar
+import { mapState } from 'vuex'; // Import mapState untuk mengakses state sidebar
+
 export default {
   name: 'DefaultLayout',
+  components: {
+    AppSidebar,
+  },
+  computed: {
+    ...mapState('ui', ['isSidebarOpen']), // Akses state isSidebarOpen dari modul ui
+  },
+  // Untuk memastikan user data dimuat saat refresh halaman
+  async mounted() {
+    // Panggil fetchUser dari store auth jika ada token dan belum login
+    if (localStorage.getItem('auth_token') && !this.$store.getters['auth/isLoggedIn']) {
+      await this.$store.dispatch('auth/fetchUser');
+    }
+  },
 };
 </script>
 
@@ -45,5 +63,6 @@ html {
 *::after {
   box-sizing: border-box;
   margin: 0;
+  padding: 0; /* Tambahkan padding 0 default untuk menghilangkan margin/padding browser */
 }
 </style>
