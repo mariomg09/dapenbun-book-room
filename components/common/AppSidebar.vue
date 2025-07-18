@@ -69,7 +69,7 @@
         />
         <SidebarLink
           v-if="hasRole('admin')"
-          to="/admin/statuses"
+          to="/admin/status"
           icon="CheckCircleIcon"
           text="Status"
         />
