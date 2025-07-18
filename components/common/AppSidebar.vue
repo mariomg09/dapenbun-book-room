@@ -81,14 +81,6 @@
         />
       </ul>
     </nav>
-
-    <div
-      v-if="isLoggedIn"
-      class="mt-auto p-4 text-center border-t border-gray-700"
-    >
-      <span v-if="isSidebarOpen">Halo, {{ user.name }}</span>
-      <UserIcon v-else class="icon mx-auto" :class="iconSize" />
-    </div>
   </div>
 </template>
 

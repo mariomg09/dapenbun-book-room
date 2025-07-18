@@ -59,18 +59,18 @@ export default {
   },
 
   methods: {
-    ...mapActions('auth', ['login']), // Panggil aksi login dari store/auth.js
+    ...mapActions('auth', ['login']),
 
     async login() {
       this.loginError = null;
       this.loginSuccess = null;
       try {
-        const success = await this.$store.dispatch('auth/login', this.loginForm); // Panggil aksi login
-        
+        const success = await this.$store.dispatch('auth/login', this.loginForm);
+                
         if (success) {
           this.loginSuccess = 'Login berhasil! Mengarahkan ke dashboard...';
-          // Redirect ke halaman yang memerlukan login, misal '/my-bookings' atau halaman utama
-          this.$router.push('/my-bookings'); 
+          this.$store.commit('auth/SET_USER')
+          this.$router.push('/'); 
         } else {
           this.loginError = 'Login gagal. Periksa username dan password Anda.';
         }
@@ -84,7 +84,7 @@ export default {
   // Lifecycle hook: Jika user sudah login, arahkan dia ke halaman utama (optional)
   mounted() {
     if (this.$store.getters['auth/isLoggedIn']) {
-      this.$router.push('/my-bookings');
+      this.$router.push('/');
     }
   }
 };

@@ -23,18 +23,17 @@ export const mutations = {
 };
 
 export const actions = {
-  async login({ commit }, credentials) {
+  async login({ commit, dispatch }, credentials) {
     try {
       const response = await this.$axios.$post("/auth/login", credentials);
       const token = response.access_token;
-      const user = response.user || null;
 
       if (token) {
         localStorage.setItem("auth_token", token);
         this.$axios.setToken(token, "Bearer");
         commit("SET_TOKEN", token);
-        commit("SET_USER", user);
         commit("SET_LOGIN_STATUS", true);
+        dispatch("fetchUser");
         return true;
       } else {
         throw new Error("Token tidak diterima setelah login.");

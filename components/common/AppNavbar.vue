@@ -63,7 +63,7 @@ export default {
     ...mapActions("auth", ["logout"]),
     async logout() {
       await this.$store.dispatch("auth/logout");
-      this.$router.push("/auth/login");
+      this.$router.push("/");
     },
   },
 };

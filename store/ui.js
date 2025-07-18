@@ -1,4 +1,3 @@
-// store/ui.js
 export const state = () => ({
   isSidebarOpen: false,
 });
