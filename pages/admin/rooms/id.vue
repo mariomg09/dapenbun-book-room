@@ -20,7 +20,7 @@ export default {
   name: "AdminRoomEdit",
   layout: "default",
   middleware: ["auth"],
-  // middleware: ['auth', 'role:admin'],
+  // middleware: ['auth'],
 
   head() {
     return {

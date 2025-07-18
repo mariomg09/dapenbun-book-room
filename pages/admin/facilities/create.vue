@@ -6,17 +6,17 @@
 </template>
 
 <script>
-import FacilityForm from '~/components/admin/facilities/FacilityForm.vue';
+import FacilityForm from "~/components/admin/facilities/FacilityForm.vue";
 
 export default {
-  name: 'AdminFacilityCreate',
-  layout: 'default',
-  middleware: ['auth'],
-  // middleware: ['auth', 'role:admin'],
+  name: "AdminFacilityCreate",
+  layout: "default",
+  middleware: ["auth"],
+  // middleware: ['auth'],
 
   head() {
     return {
-      title: 'Tambah Fasilitas',
+      title: "Tambah Fasilitas",
     };
   },
 
@@ -26,8 +26,8 @@ export default {
 
   methods: {
     facilityCreated() {
-      alert('Fasilitas berhasil ditambahkan!');
-      this.$router.push('/admin/facilities');
+      alert("Fasilitas berhasil ditambahkan!");
+      this.$router.push("/admin/facilities");
     },
   },
 };

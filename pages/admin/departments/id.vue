@@ -23,7 +23,7 @@ export default {
   name: "AdminDepartmentEdit",
   layout: "default",
   middleware: ["auth"], // Membutuhkan autentikasi
-  // middleware: ['auth', 'role:admin'], // Role admin untuk mengedit
+  // middleware: ['auth'], // Role admin untuk mengedit
 
   head() {
     return {

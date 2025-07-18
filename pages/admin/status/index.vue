@@ -28,7 +28,7 @@ export default {
   name: "AdminStatusIndex",
   layout: "default",
   middleware: ["auth"],
-  // middleware: ['auth', 'role:admin'],
+  // middleware: ['auth'],
 
   head() {
     return {

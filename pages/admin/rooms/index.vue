@@ -11,8 +11,12 @@
       </NuxtLink>
     </div>
 
-    <div v-if="loading" class="text-center text-gray-600">Memuat ruangan...</div>
-    <div v-else-if="error" class="text-center text-red-600">Gagal memuat ruangan: {{ error }}</div>
+    <div v-if="loading" class="text-center text-gray-600">
+      Memuat ruangan...
+    </div>
+    <div v-else-if="error" class="text-center text-red-600">
+      Gagal memuat ruangan: {{ error }}
+    </div>
     <div v-else>
       <RoomTable :rooms="rooms" @roomDeleted="fetchRooms" />
     </div>
@@ -20,17 +24,17 @@
 </template>
 
 <script>
-import RoomTable from '~/components/admin/rooms/RoomTable.vue';
+import RoomTable from "~/components/admin/rooms/RoomTable.vue";
 
 export default {
-  name: 'AdminRoomIndex',
-  layout: 'default',
-  middleware: ['auth'],
-  // middleware: ['auth', 'role:admin'],
+  name: "AdminRoomIndex",
+  layout: "default",
+  middleware: ["auth"],
+  // middleware: ['auth'],
 
   head() {
     return {
-      title: 'Manajemen Ruangan',
+      title: "Manajemen Ruangan",
     };
   },
 
@@ -56,11 +60,14 @@ export default {
       this.error = null;
       try {
         // Panggil API GET /api/rooms dengan with_relations=true untuk memuat fasilitas
-        const response = await this.$axios.$get('/rooms?with_relations=true');
+        const response = await this.$axios.$get("/rooms?with_relations=true");
         this.rooms = response.data.data;
       } catch (e) {
-        this.error = e.response?.data?.message || e.message || 'Terjadi kesalahan saat memuat data.';
-        console.error('Error fetching rooms:', e);
+        this.error =
+          e.response?.data?.message ||
+          e.message ||
+          "Terjadi kesalahan saat memuat data.";
+        console.error("Error fetching rooms:", e);
       } finally {
         this.loading = false;
       }

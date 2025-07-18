@@ -33,7 +33,7 @@ export default {
   name: "AdminFacilityIndex",
   layout: "default",
   middleware: ["auth"],
-  // middleware: ['auth', 'role:admin'],
+  // middleware: ['auth'],
 
   head() {
     return {

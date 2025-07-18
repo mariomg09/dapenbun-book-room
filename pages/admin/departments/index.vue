@@ -34,7 +34,7 @@ export default {
   layout: "default", // Menggunakan layout default
   middleware: ["auth"], // Membutuhkan autentikasi
   // Opsional: middleware cek role admin
-  // middleware: ['auth', 'role:admin'], // Anda perlu membuat middleware 'role' sendiri
+  // middleware: ['auth'], // Anda perlu membuat middleware 'role' sendiri
 
   head() {
     return {
