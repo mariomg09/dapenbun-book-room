@@ -12,7 +12,9 @@
     "@nuxtjs/axios": "^5.13.6",
     "axios": "^0.27.2",
     "core-js": "^3.15.1",
-    "nuxt": "^2.15.7"
+    "lucide-vue": "^0.517.0",
+    "nuxt": "^2.15.7",
+    "vue-feather-icons": "^5.1.0"
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^4.2.0",

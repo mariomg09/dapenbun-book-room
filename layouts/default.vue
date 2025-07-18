@@ -1,55 +1,60 @@
 <template>
-  <div class="flex min-h-screen">
-    <AppSidebar />
-
-    <div :class="{ 'ml-64': isSidebarOpen, 'ml-20': !isSidebarOpen }" class="flex-grow transition-all duration-300 ease-in-out">
-      <header class="bg-white p-4 shadow-sm border-b">
-        <div class="container mx-auto">
-          <h1 class="text-xl font-semibold text-gray-800">
-            {{ $route.meta && $route.meta.title ? $route.meta.title : 'Dashboard' }}
-          </h1>
-        </div>
-      </header>
-
-      <main class="p-4">
-        <Nuxt />
-      </main>
-
-      <footer class="bg-gray-100 text-gray-600 p-4 text-center mt-auto border-t">
-        <p>
-          &copy; {{ new Date().getFullYear() }} Aplikasi Booking Ruangan.
-        </p>
-      </footer>
+  <div v-if="isAppReady" class="flex flex-col min-h-screen">
+    <AppNavbar />
+    <div class="flex flex-grow">
+      <AppSidebar />
+      <div
+        class="flex-grow flex flex-col transition-all duration-300 ease-in-out"
+        :class="{ 'ml-64': isSidebarOpen, 'ml-16': !isSidebarOpen }"
+        style="margin-top: 4rem"
+      >
+        <main class="p-4 flex-grow">
+          <Nuxt />
+        </main>
+        <footer class="bg-gray-100 text-gray-600 p-4 text-center border-t">
+          <p>&copy; {{ new Date().getFullYear() }} Aplikasi Booking Ruangan.</p>
+        </footer>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import AppSidebar from '~/components/common/AppSidebar.vue'; // Import komponen sidebar
-import { mapState } from 'vuex'; // Import mapState untuk mengakses state sidebar
+import { mapState } from "vuex";
+import AppSidebar from "~/components/common/AppSidebar.vue";
+import AppNavbar from "~/components/common/AppNavbar.vue";
 
 export default {
-  name: 'DefaultLayout',
+  name: "DefaultLayout",
   components: {
     AppSidebar,
+    AppNavbar,
+  },
+  data() {
+    return {
+      isAppReady: false,
+    };
   },
   computed: {
-    ...mapState('ui', ['isSidebarOpen']), // Akses state isSidebarOpen dari modul ui
+    ...mapState("ui", ["isSidebarOpen"]),
   },
-  // Untuk memastikan user data dimuat saat refresh halaman
   async mounted() {
-    // Panggil fetchUser dari store auth jika ada token dan belum login
-    if (localStorage.getItem('auth_token') && !this.$store.getters['auth/isLoggedIn']) {
-      await this.$store.dispatch('auth/fetchUser');
+    if (
+      localStorage.getItem("auth_token") &&
+      !this.$store.getters["auth/isLoggedIn"]
+    ) {
+      await this.$store.dispatch("auth/fetchUser");
     }
+    this.isAppReady = true;
   },
 };
 </script>
 
+
 <style>
-/* Global CSS atau import Tailwind (biasanya di nuxt.config.js/plugins) */
 html {
-  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
   word-spacing: 1px;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
@@ -63,6 +68,6 @@ html {
 *::after {
   box-sizing: border-box;
   margin: 0;
-  padding: 0; /* Tambahkan padding 0 default untuk menghilangkan margin/padding browser */
+  /* Hapus padding: 0; di sini agar p-4 di main dan header bisa bekerja */
 }
 </style>

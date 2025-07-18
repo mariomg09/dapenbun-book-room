@@ -1,10 +1,34 @@
 <template>
   <div class="min-h-screen bg-gray-100 py-8">
     <div class="container mx-auto px-4">
-      <h1 class="text-4xl font-bold text-center text-blue-800 mb-8">
+      <h2 class="text-3xl font-bold text-center text-blue-800 mb-8">
         Jadwal Ruangan Tersedia
-      </h1>
+      </h2>
 
+      <!-- <div
+        v-if="isLoggedIn && user"
+        class="bg-white p-6 rounded-lg shadow-md mb-8 max-w-lg mx-auto"
+      >
+        <h3 class="text-xl font-semibold mb-2">Informasi Akun Anda</h3>
+        <p><strong>Nama:</strong> {{ user.name }}</p>
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p>
+          <strong>Roles Anda:</strong>
+          <span v-if="user.roles && user.roles.length > 0">
+            {{ user.roles.map((role) => role.name).join(", ") }}
+          </span>
+          <span v-else class="italic text-gray-500"
+            >Tidak ada role yang ditemukan.</span
+          >
+        </p>
+        <p v-if="user.department_id">
+          <strong>ID Departemen:</strong> {{ user.department_id }}
+        </p>
+        <p v-if="user.urusan_id">
+          <strong>ID Urusan:</strong> {{ user.urusan_id }}
+        </p>
+      </div> -->
       <div v-if="loading" class="text-center text-gray-600 text-lg">
         Memuat jadwal...
       </div>
@@ -23,9 +47,9 @@
           :key="booking.id"
           class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500"
         >
-          <h2 class="text-xl font-semibold text-gray-900 mb-2">
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">
             {{ booking.title }}
-          </h2>
+          </h3>
           <p class="text-gray-700 mb-1">
             <span class="font-medium">Ruangan:</span> {{ booking.room.name }}
           </p>
@@ -55,9 +79,24 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex"; // Import mapGetters
+
 export default {
-  name: "IndexPage", // Ubah nama komponen jika perlu
-  layout: "default", // Gunakan layout default Anda
+  name: "IndexPage",
+  layout: "default",
+
+  head() {
+    return {
+      title: "Jadwal Publik",
+      meta: [
+        {
+          hid: "description",
+          name: "description",
+          content: "Jadwal ketersediaan ruangan booking secara publik.",
+        },
+      ],
+    };
+  },
 
   data() {
     return {
@@ -67,14 +106,16 @@ export default {
     };
   },
 
+  computed: {
+    ...mapGetters("auth", ["isLoggedIn", "user"]), // Map getters dari store auth
+  },
+
   async fetch() {
     try {
-      // Panggil API publik untuk jadwal booking
-      // Parameter with_relations=true agar mendapatkan user, room, dan status
       const response = await this.$axios.$get(
         "/public/bookings/schedule?with_relations=true"
       );
-      this.bookings = response.data.data; // Akses 'data.data' karena ini respons paginated
+      this.bookings = response.data.data;
     } catch (e) {
       this.error =
         e.response?.data?.message ||
@@ -88,7 +129,6 @@ export default {
 
   methods: {
     formatDate(datetime) {
-      // Memformat tanggal (contoh: 10 Juli 2025)
       if (!datetime) return "";
       const date = new Date(datetime);
       return date.toLocaleDateString("id-ID", {
@@ -98,7 +138,6 @@ export default {
       });
     },
     formatTime(datetime) {
-      // Memformat waktu (contoh: 10:30)
       if (!datetime) return "";
       const date = new Date(datetime);
       return date.toLocaleTimeString("id-ID", {
@@ -107,9 +146,24 @@ export default {
       });
     },
   },
+
+  // Tambahkan ini untuk debugging di konsol saat page dimuat
+  mounted() {
+    console.log("User state in IndexPage:", this.user);
+    if (this.user && this.user.roles) {
+      console.log(
+        "User roles:",
+        this.user.roles.map((r) => r.name)
+      );
+    } else if (this.isLoggedIn) {
+      console.log("User is logged in, but roles data is missing or empty.");
+    } else {
+      console.log("User is not logged in.");
+    }
+  },
 };
 </script>
 
 <style>
-/* Anda bisa menambahkan styling khusus untuk halaman ini di sini, atau mengandalkan Tailwind CSS */
+/* ... styling ... */
 </style>

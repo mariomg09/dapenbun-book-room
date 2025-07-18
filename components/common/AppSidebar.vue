@@ -1,231 +1,84 @@
 <template>
   <div
     :class="{ 'w-64': isSidebarOpen, 'w-16': !isSidebarOpen }"
-    class="bg-gray-800 text-white min-h-screen flex flex-col transition-all duration-300 ease-in-out fixed left-0 top-0 z-40"
+    class="bg-gray-800 text-white min-h-screen flex flex-col transition-all duration-300 fixed left-0 top-16 z-40"
+    style="height: calc(100vh - 4rem)"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
   >
-    <div
-      class="p-4 flex items-center"
-      :class="{
-        'justify-between': isSidebarOpen,
-        'justify-center': !isSidebarOpen,
-      }"
-    >
-      <h2
-        v-if="isSidebarOpen"
-        class="text-2xl font-semibold whitespace-nowrap overflow-hidden"
-      >
-        Dapenbun
-      </h2>
-      <button
-        @click="toggleSidebar"
-        class="p-2 rounded-full hover:bg-gray-700 ring-2 ring-gray-500"
-      >
-        <svg
-          v-if="isSidebarOpen"
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M15 19l-7-7 7-7"
-          ></path>
-        </svg>
-        <svg
-          v-else
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 5l7 7-7 7"
-          ></path>
-        </svg>
-      </button>
-    </div>
-
-    <nav class="flex-grow">
+    <nav class="flex-grow pt-4">
       <ul class="space-y-2 px-2">
-        <li>
-          <NuxtLink
-            to="/"
-            class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-          >
-            <span class="icon" :class="{ 'mr-3': isSidebarOpen }"
-              >&#127968;</span
-            >
-            <span v-if="isSidebarOpen" class="whitespace-nowrap overflow-hidden"
-              >Beranda</span
-            >
-          </NuxtLink>
-        </li>
-
-        <li v-if="!isLoggedIn">
-          <NuxtLink
-            to="/auth/login"
-            class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-          >
-            <span class="icon" :class="{ 'mr-3': isSidebarOpen }"
-              >&#128273;</span
-            >
-            <span v-if="isSidebarOpen" class="whitespace-nowrap overflow-hidden"
-              >Login</span
-            >
-          </NuxtLink>
-        </li>
-        <li v-else>
-          <a
-            @click="logout"
-            class="flex items-center p-2 rounded-lg hover:bg-gray-700 cursor-pointer"
-          >
-            <span class="icon" :class="{ 'mr-3': isSidebarOpen }"
-              >&#128682;</span
-            >
-            <span v-if="isSidebarOpen" class="whitespace-nowrap overflow-hidden"
-              >Logout</span
-            >
-          </a>
-        </li>
-
-        <li v-if="isLoggedIn" class="border-t border-gray-700 my-2"></li>
-
-        <li v-if="isLoggedIn">
-          <NuxtLink
-            to="/my-bookings"
-            class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-          >
-            <span class="icon" :class="{ 'mr-3': isSidebarOpen }"
-              >&#128197;</span
-            >
-            <span v-if="isSidebarOpen" class="whitespace-nowrap overflow-hidden"
-              >Booking Saya</span
-            >
-          </NuxtLink>
-        </li>
-
-        <li v-if="hasRole('admin')" class="border-t border-gray-700 my-2"></li>
+        <SidebarLink to="/" icon="HomeIcon" text="Beranda" />
+        <SidebarLink
+          v-if="isLoggedIn"
+          to="/my-bookings"
+          icon="CalendarIcon"
+          text="Booking Saya"
+        />
+        <SidebarLink
+          v-if="isLoggedIn"
+          to="/bookings"
+          icon="CalendarIcon"
+          text="Booking Ruangan"
+        />
 
         <li
           v-if="hasRole('admin')"
-          class="text-gray-400 text-sm uppercase px-4 pt-2 pb-1"
-          :class="{ 'text-center': !isSidebarOpen }"
+          :class="{ 'flex justify-center': !isSidebarOpen }"
+          class="text-gray-400 text-sm uppercase pt-2 pb-1"
         >
-          <span v-if="isSidebarOpen">Admin Panel</span>
-          <span v-else class="icon">&#9881;</span>
+          <span v-if="isSidebarOpen" class="pl-2">Admin Panel</span>
+          <SettingsIcon v-else class="icon" :class="iconSize" />
         </li>
-        <li v-if="hasRole('admin')">
-          <NuxtLink
-            to="/admin/users"
-            class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-          >
-            <span class="icon" :class="{ 'mr-3': isSidebarOpen }"
-              >&#128100;</span
-            >
-            <span v-if="isSidebarOpen" class="whitespace-nowrap overflow-hidden"
-              >Manajemen User</span
-            >
-          </NuxtLink>
-        </li>
-        <li v-if="hasRole('admin')">
-          <NuxtLink
-            to="/admin/roles"
-            class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-          >
-            <span class="icon" :class="{ 'mr-3': isSidebarOpen }"
-              >&#128101;</span
-            >
-            <span v-if="isSidebarOpen" class="whitespace-nowrap overflow-hidden"
-              >Manajemen Role</span
-            >
-          </NuxtLink>
-        </li>
-        <li v-if="hasRole('admin')">
-          <NuxtLink
-            to="/admin/departments"
-            class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-          >
-            <span class="icon" :class="{ 'mr-3': isSidebarOpen }"
-              >&#127970;</span
-            >
-            <span v-if="isSidebarOpen" class="whitespace-nowrap overflow-hidden"
-              >Departemen</span
-            >
-          </NuxtLink>
-        </li>
-        <li v-if="hasRole('admin')">
-          <NuxtLink
-            to="/admin/urusan"
-            class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-          >
-            <span class="icon" :class="{ 'mr-3': isSidebarOpen }"
-              >&#128193;</span
-            >
-            <span v-if="isSidebarOpen" class="whitespace-nowrap overflow-hidden"
-              >Urusan</span
-            >
-          </NuxtLink>
-        </li>
-        <li v-if="hasRole('admin')">
-          <NuxtLink
-            to="/admin/facilities"
-            class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-          >
-            <span class="icon" :class="{ 'mr-3': isSidebarOpen }"
-              >&#128214;</span
-            >
-            <span v-if="isSidebarOpen" class="whitespace-nowrap overflow-hidden"
-              >Fasilitas</span
-            >
-          </NuxtLink>
-        </li>
-        <li v-if="hasRole('admin')">
-          <NuxtLink
-            to="/admin/rooms"
-            class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-          >
-            <span class="icon" :class="{ 'mr-3': isSidebarOpen }"
-              >&#127974;</span
-            >
-            <span v-if="isSidebarOpen" class="whitespace-nowrap overflow-hidden"
-              >Ruangan</span
-            >
-          </NuxtLink>
-        </li>
-        <li v-if="hasRole('admin')">
-          <NuxtLink
-            to="/admin/statuses"
-            class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-          >
-            <span class="icon" :class="{ 'mr-3': isSidebarOpen }"
-              >&#128077;</span
-            >
-            <span v-if="isSidebarOpen" class="whitespace-nowrap overflow-hidden"
-              >Status</span
-            >
-          </NuxtLink>
-        </li>
-        <li v-if="hasRole('admin')">
-          <NuxtLink
-            to="/admin/audit-logs"
-            class="flex items-center p-2 rounded-lg hover:bg-gray-700"
-          >
-            <span class="icon" :class="{ 'mr-3': isSidebarOpen }"
-              >&#128220;</span
-            >
-            <span v-if="isSidebarOpen" class="whitespace-nowrap overflow-hidden"
-              >Log Audit</span
-            >
-          </NuxtLink>
-        </li>
+
+        <SidebarLink
+          v-if="hasRole('admin')"
+          to="/admin/users"
+          icon="UsersIcon"
+          text="Manajemen User"
+        />
+        <SidebarLink
+          v-if="hasRole('admin')"
+          to="/admin/roles"
+          icon="KeyIcon"
+          text="Manajemen Role"
+        />
+        <SidebarLink
+          v-if="hasRole('admin')"
+          to="/admin/departments"
+          icon="FileTextIcon"
+          text="Departemen"
+        />
+        <SidebarLink
+          v-if="hasRole('admin')"
+          to="/admin/urusan"
+          icon="FileTextIcon"
+          text="Urusan"
+        />
+        <SidebarLink
+          v-if="hasRole('admin')"
+          to="/admin/facilities"
+          icon="TvIcon"
+          text="Fasilitas"
+        />
+        <SidebarLink
+          v-if="hasRole('admin')"
+          to="/admin/rooms"
+          icon="GridIcon"
+          text="Ruangan"
+        />
+        <SidebarLink
+          v-if="hasRole('admin')"
+          to="/admin/statuses"
+          icon="CheckCircleIcon"
+          text="Status"
+        />
+        <SidebarLink
+          v-if="hasRole('admin')"
+          to="/admin/audit-logs"
+          icon="ClipboardIcon"
+          text="Log Audit"
+        />
       </ul>
     </nav>
 
@@ -233,30 +86,102 @@
       v-if="isLoggedIn"
       class="mt-auto p-4 text-center border-t border-gray-700"
     >
-      <span v-if="isSidebarOpen" class="whitespace-nowrap overflow-hidden"
-        >Halo, {{ user.name }}</span
-      >
-      <span v-else class="icon">&#128100;</span>
+      <span v-if="isSidebarOpen">Halo, {{ user.name }}</span>
+      <UserIcon v-else class="icon mx-auto" :class="iconSize" />
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
+import {
+  HomeIcon,
+  UserIcon,
+  CalendarIcon,
+  SettingsIcon,
+  UsersIcon,
+  KeyIcon,
+  FileTextIcon,
+  TvIcon,
+  GridIcon,
+  CheckCircleIcon,
+  ClipboardIcon,
+} from "vue-feather-icons";
 
 export default {
   name: "AppSidebar",
   computed: {
-    ...mapState("ui", ["isSidebarOpen"]), // Ambil state sidebar dari modul ui
-    ...mapGetters("auth", ["isLoggedIn", "user", "hasRole"]), // Ambil state auth user dari modul auth
+    ...mapState("ui", ["isSidebarOpen"]),
+    ...mapGetters("auth", ["isLoggedIn", "user", "hasRole"]),
+    iconSize() {
+      return this.isSidebarOpen ? "size-6 mr-3" : "size-5";
+    },
   },
   methods: {
-    ...mapActions("ui", ["toggleSidebar"]), // Aksi untuk mengubah state sidebar
-    ...mapActions("auth", ["logout"]), // Aksi logout
-
-    async logout() {
-      await this.$store.dispatch("auth/logout"); // Panggil aksi logout dari Vuex
-      this.$router.push("/auth/login"); // Redirect ke halaman login setelah logout
+    ...mapActions("ui", ["setSidebarState"]),
+    handleMouseEnter() {
+      this.setSidebarState(true);
+    },
+    handleMouseLeave() {
+      this.setSidebarState(false);
+    },
+  },
+  components: {
+    HomeIcon,
+    UserIcon,
+    CalendarIcon,
+    SettingsIcon,
+    UsersIcon,
+    KeyIcon,
+    FileTextIcon,
+    TvIcon,
+    GridIcon,
+    CheckCircleIcon,
+    ClipboardIcon,
+    SidebarLink: {
+      props: ["to", "icon", "text"],
+      computed: {
+        ...mapState("ui", ["isSidebarOpen"]),
+        iconSize() {
+          return this.isSidebarOpen ? "size-6 mr-3" : "size-5";
+        },
+      },
+      components: {
+        HomeIcon,
+        CalendarIcon,
+        UsersIcon,
+        KeyIcon,
+        FileTextIcon,
+        TvIcon,
+        GridIcon,
+        CheckCircleIcon,
+        ClipboardIcon,
+      },
+      render(h) {
+        const IconComponent = this.$options.components[this.icon];
+        return h("li", {}, [
+          h(
+            "NuxtLink",
+            {
+              props: { to: this.to },
+              class: [
+                "flex items-center p-2 rounded-lg hover:bg-gray-700",
+                { "justify-center": !this.isSidebarOpen },
+              ],
+            },
+            [
+              h(IconComponent, { class: ["icon", this.iconSize] }),
+              this.isSidebarOpen
+                ? h(
+                    "span",
+                    { class: "whitespace-nowrap overflow-hidden" },
+                    this.text
+                  )
+                : null,
+            ]
+          ),
+        ]);
+      },
     },
   },
 };
@@ -264,13 +189,11 @@ export default {
 
 <style scoped>
 .icon {
-  font-size: 1.5rem; /* Ukuran ikon Unicode */
-  line-height: 1; /* Pastikan tinggi baris sesuai */
   display: inline-block;
   vertical-align: middle;
 }
 .nuxt-link-active {
-  background-color: rgba(55, 65, 81, 0.7); /* bg-gray-700 dengan opacity */
+  background-color: rgba(55, 65, 81, 0.7);
   color: white;
 }
 </style>
