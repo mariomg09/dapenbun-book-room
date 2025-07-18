@@ -4,31 +4,6 @@
       <h2 class="text-3xl font-bold text-center text-blue-800 mb-8">
         Jadwal Ruangan Tersedia
       </h2>
-
-      <!-- <div
-        v-if="isLoggedIn && user"
-        class="bg-white p-6 rounded-lg shadow-md mb-8 max-w-lg mx-auto"
-      >
-        <h3 class="text-xl font-semibold mb-2">Informasi Akun Anda</h3>
-        <p><strong>Nama:</strong> {{ user.name }}</p>
-        <p><strong>Username:</strong> {{ user.username }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        <p>
-          <strong>Roles Anda:</strong>
-          <span v-if="user.roles && user.roles.length > 0">
-            {{ user.roles.map((role) => role.name).join(", ") }}
-          </span>
-          <span v-else class="italic text-gray-500"
-            >Tidak ada role yang ditemukan.</span
-          >
-        </p>
-        <p v-if="user.department_id">
-          <strong>ID Departemen:</strong> {{ user.department_id }}
-        </p>
-        <p v-if="user.urusan_id">
-          <strong>ID Urusan:</strong> {{ user.urusan_id }}
-        </p>
-      </div> -->
       <div v-if="loading" class="text-center text-gray-600 text-lg">
         Memuat jadwal...
       </div>
@@ -107,7 +82,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters("auth", ["isLoggedIn", "user"]), // Map getters dari store auth
+    ...mapGetters("auth", ["isLoggedIn", "user"]),
   },
 
   async fetch() {
