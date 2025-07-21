@@ -95,8 +95,8 @@ export default {
   methods: {
     async deleteUser(id) {
       try {
-        await this.$axios.$delete(`/users/${id}`); // Endpoint DELETE /api/users/{id}
-        this.$emit("userDeleted"); // Memberi tahu parent untuk me-refresh daftar
+        await this.$axios.$delete(`/users/${id}`);
+        this.$emit("userDeleted");
         alert("User berhasil dihapus!");
       } catch (e) {
         alert(

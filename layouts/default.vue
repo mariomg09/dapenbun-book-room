@@ -12,7 +12,7 @@
           <Nuxt />
         </main>
         <footer class="bg-gray-100 text-gray-600 p-4 text-center border-t">
-          <p>&copy; {{ new Date().getFullYear() }} Aplikasi Booking Ruangan.</p>
+          <p>&copy; {{ new Date().getFullYear() }} Dapenbun Booking Room - Mario.</p>
         </footer>
       </div>
     </div>

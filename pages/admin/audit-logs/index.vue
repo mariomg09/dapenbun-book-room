@@ -171,7 +171,7 @@ export default {
         const response = await this.$axios.$get("/audit-logs", {
           params,
         });
-        this.auditLogs = response.data.data; // Mengakses langsung response.data
+        this.auditLogs = response.data.data;
         this.currentPage = response.current_page;
         this.perPage = response.per_page;
         this.totalPages = response.last_page;
