@@ -58,7 +58,6 @@ export default {
       },
       users: [], // Untuk daftar kepala departemen yang mungkin
       formError: null,
-      isEditing: false,
     };
   },
   computed: {

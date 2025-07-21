@@ -50,7 +50,7 @@ export default {
       const response = await this.$axios.$get(
         `/departments/${this.$route.params.id}`
       ); // Ambil ID dari URL
-      this.department = response.data.data; // Sesuaikan dengan struktur respons
+      this.department = response.data; // Sesuaikan dengan struktur respons
     } catch (e) {
       this.error =
         e.response?.data?.message ||

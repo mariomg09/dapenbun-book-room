@@ -47,7 +47,7 @@ export default {
       const response = await this.$axios.$get(
         `/roles/${this.$route.params.id}`
       ); // Endpoint GET /api/roles/{id}
-      this.role = response.data.data;
+      this.role = response.data;
     } catch (e) {
       this.error =
         e.response?.data?.message ||

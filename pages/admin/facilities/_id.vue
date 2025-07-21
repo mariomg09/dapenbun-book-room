@@ -47,7 +47,7 @@ export default {
       const response = await this.$axios.$get(
         `/facilities/${this.$route.params.id}`
       );
-      this.facility = response.data.data;
+      this.facility = response.data;
     } catch (e) {
       this.error =
         e.response?.data?.message ||

@@ -47,7 +47,7 @@ export default {
       const response = await this.$axios.$get(
         `/status/${this.$route.params.id}`
       );
-      this.status = response.data.data;
+      this.status = response.data;
     } catch (e) {
       this.error =
         e.response?.data?.message ||

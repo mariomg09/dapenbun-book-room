@@ -48,7 +48,7 @@ export default {
       const response = await this.$axios.$get(
         `/urusan/${this.$route.params.id}`
       );
-      this.urusan = response.data.data;
+      this.urusan = response.data;
     } catch (e) {
       this.error =
         e.response?.data?.message ||
