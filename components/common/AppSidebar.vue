@@ -15,12 +15,6 @@
           icon="CalendarIcon"
           text="Booking Saya"
         />
-        <SidebarLink
-          v-if="isLoggedIn"
-          to="/bookings"
-          icon="CalendarIcon"
-          text="Booking Ruangan"
-        />
 
         <li
           v-if="hasRole('admin')"
@@ -31,6 +25,12 @@
           <SettingsIcon v-else class="icon" :class="iconSize" />
         </li>
 
+        <SidebarLink
+          v-if="hasRole('admin')"
+          to="/admin/bookings"
+          icon="CalendarIcon"
+          text="Manajemen Booking"
+        />
         <SidebarLink
           v-if="hasRole('admin')"
           to="/admin/users"
