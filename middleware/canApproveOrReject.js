@@ -6,7 +6,8 @@ export default function ({ store, redirect }) {
     return redirect("/auth/login");
   }
 
-  if (!hasRole("pimpinan") && !hasRole("HR")) {
+  if (!hasRole("pimpinan") && !hasRole("HR") && !hasRole("admin")) {
+
     return redirect("/");
   }
 }

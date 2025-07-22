@@ -15,6 +15,12 @@
           icon="CalendarIcon"
           text="Booking Saya"
         />
+        <SidebarLink
+          v-if="canApproveOrReject"
+          to="/approvals/bookings"
+          icon="CheckSquareIcon"
+          text="Antrean Persetujuan"
+        />
 
         <li
           v-if="hasRole('admin')"
@@ -98,6 +104,7 @@ import {
   GridIcon,
   CheckCircleIcon,
   ClipboardIcon,
+  CheckSquareIcon,
 } from "vue-feather-icons";
 
 export default {
@@ -105,6 +112,12 @@ export default {
   computed: {
     ...mapState("ui", ["isSidebarOpen"]),
     ...mapGetters("auth", ["isLoggedIn", "user", "hasRole"]),
+    canApproveOrReject() {
+      const isPurePimpinan = this.hasRole("pimpinan") && !this.hasRole("HR");
+      const isCombinedHRandPimpinan =
+        this.hasRole("pimpinan") && this.hasRole("HR");
+      return isPurePimpinan || isCombinedHRandPimpinan || this.hasRole("admin");
+    },
     iconSize() {
       return this.isSidebarOpen ? "size-6 mr-3" : "size-5";
     },
@@ -130,6 +143,7 @@ export default {
     GridIcon,
     CheckCircleIcon,
     ClipboardIcon,
+    CheckSquareIcon,
     SidebarLink: {
       props: ["to", "icon", "text"],
       computed: {
@@ -148,6 +162,7 @@ export default {
         GridIcon,
         CheckCircleIcon,
         ClipboardIcon,
+        CheckSquareIcon,
       },
       render(h) {
         const IconComponent = this.$options.components[this.icon];
