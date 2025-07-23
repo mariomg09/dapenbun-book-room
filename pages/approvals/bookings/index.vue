@@ -21,6 +21,41 @@
         :bookings="filteredBookings"
         @bookingDeleted="fetchApprovalBookings"
       />
+
+      <div class="flex justify-center mt-6">
+        <nav
+          class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+          aria-label="Pagination"
+        >
+          <button
+            @click="goToPage(currentPage - 1)"
+            :disabled="currentPage === 1"
+            class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+          >
+            Sebelumnya
+          </button>
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            @click="goToPage(page)"
+            :class="[
+              page === currentPage
+                ? 'bg-blue-500 text-white'
+                : 'bg-white text-gray-700',
+              'relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium hover:bg-gray-50',
+            ]"
+          >
+            {{ page }}
+          </button>
+          <button
+            @click="goToPage(currentPage + 1)"
+            :disabled="currentPage === totalPages"
+            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+          >
+            Selanjutnya
+          </button>
+        </nav>
+      </div>
     </div>
   </div>
 </template>
@@ -32,7 +67,7 @@ import { mapGetters } from "vuex";
 export default {
   name: "ApprovalsBookingPage", // Nama halaman untuk antrean persetujuan
   layout: "default",
-  middleware: ["auth", "canApproveOrReject"], // Pastikan user login dan punya role pimpinan/HR/admin
+  middleware: ["auth", "canApproveOrReject"],
 
   head() {
     return {
@@ -49,14 +84,18 @@ export default {
       allBookings: [], // Data booking mentah dari API (pending & pimpinan_approved)
       loading: true,
       error: null,
+      currentPage: 1, // State untuk halaman saat ini
+      perPage: 10, // State untuk item per halaman
+      totalPages: 1, // State untuk total halaman
+      totalItems: 0, // State untuk total item
+      // Anda bisa tambahkan 'filters' object di sini jika ingin ada fitur filter
+      // filters: { room_id: null, user_id: null },
     };
   },
 
   computed: {
-    ...mapGetters("auth", ["user", "hasRole"]), // Akses user dan hasRole dari store Vuex
+    ...mapGetters("auth", ["user", "hasRole"]),
 
-    // Properti terkomputasi yang akan memfilter bookings berdasarkan role dan departemen user
-    // Logika ini harus sama persis dengan yang ada di BookingPolicy::approve/reject
     filteredBookings() {
       if (!this.user || !this.allBookings.length) {
         return [];
@@ -74,7 +113,6 @@ export default {
       const isCombinedHRandPimpinan =
         userRoles.includes("HR") && userRoles.includes("pimpinan");
 
-      // Admin bisa melihat semua booking untuk approval
       if (this.hasRole("admin")) {
         return this.allBookings;
       }
@@ -87,32 +125,24 @@ export default {
         const bookingUserDeptId = booking.user.department_id;
         const bookingStatusName = booking.status ? booking.status.name : "";
 
-        // Aturan sesuai Policy (untuk tampilan di frontend)
         if (isCombinedHRandPimpinan) {
-          // Kombinasi HR+Pimpinan:
-          // Jika departemen sama: bisa pending atau pimpinan_approved
           if (currentUserDeptId === bookingUserDeptId) {
             return (
               bookingStatusName === "pending" ||
               bookingStatusName === "pimpinan_approved"
             );
-          }
-          // Jika departemen berbeda: hanya bisa pimpinan_approved
-          else {
+          } else {
             return bookingStatusName === "pimpinan_approved";
           }
         }
 
-        // Jika Pure Pimpinan
         if (isPurePimpinan) {
-          // Hanya bisa pending dan harus satu departemen
           return (
             bookingStatusName === "pending" &&
             currentUserDeptId === bookingUserDeptId
           );
         }
 
-        // Jika Pure HR (tidak punya kemampuan approve/reject di Policy, jadi tidak tampilkan di halaman ini)
         if (isPureHR) {
           return false;
         }
@@ -131,15 +161,25 @@ export default {
       this.loading = true;
       this.error = null;
       try {
-        // Ambil ID status 'pending' dan 'pimpinan_approved' dari database
-        const pendingStatusId = 1; // Asumsi ID 'pending' (sesuai StatusSeeder)
-        const pimpinanApprovedStatusId = 2; // Asumsi ID 'pimpinan_approved' (sesuai StatusSeeder)
+        const pendingStatusId = 1;
+        const pimpinanApprovedStatusId = 2;
 
-        // Panggil API untuk semua booking dengan status pending atau pimpinan_approved
+        const params = {
+          page: this.currentPage,
+          per_page: this.perPage,
+          status_id: `${pendingStatusId},${pimpinanApprovedStatusId}`, // Filter status di backend
+          // ... Anda bisa tambahkan this.filters di sini jika ada
+        };
+
         const response = await this.$axios.$get(
-          `/bookings?status_id=${pendingStatusId},${pimpinanApprovedStatusId}&with_relations=true`
+          `/bookings?with_relations=true`,
+          { params }
         );
-        this.allBookings = response.data.data; // Simpan data mentah
+        this.allBookings = response.data.data;
+        this.currentPage = response.data.current_page;
+        this.perPage = response.data.per_page;
+        this.totalPages = response.data.last_page;
+        this.totalItems = response.data.total;
       } catch (e) {
         this.error =
           e.response?.data?.message ||
@@ -150,6 +190,16 @@ export default {
         this.loading = false;
       }
     },
+    // Metode untuk navigasi paginasi
+    goToPage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+        this.fetchApprovalBookings();
+      }
+    },
+    // Jika Anda menambahkan filter, Anda juga akan memiliki metode applyFilters dan resetFilters
+    // applyFilters() { this.currentPage = 1; this.fetchApprovalBookings(); },
+    // resetFilters() { this.filters = {}; this.currentPage = 1; this.fetchApprovalBookings(); },
   },
 };
 </script>
