@@ -20,7 +20,6 @@ export default {
   name: "AdminRoleEdit",
   layout: "default",
   middleware: ["auth"],
-  // middleware: ['auth'],
 
   head() {
     return {
@@ -46,7 +45,7 @@ export default {
     try {
       const response = await this.$axios.$get(
         `/roles/${this.$route.params.id}`
-      ); // Endpoint GET /api/roles/{id}
+      );
       this.role = response.data;
     } catch (e) {
       this.error =

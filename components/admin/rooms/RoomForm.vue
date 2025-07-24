@@ -107,7 +107,7 @@ export default {
   props: {
     room: {
       type: Object,
-      default: null, // Default null untuk mode tambah
+      default: null,
     },
   },
   data() {
@@ -117,9 +117,9 @@ export default {
         capacity: 0,
         description: "",
         available: true,
-        facility_ids: [], // Array untuk menyimpan ID fasilitas yang dipilih
+        facility_ids: [],
       },
-      allFacilities: [], // Daftar semua fasilitas yang tersedia
+      allFacilities: [],
       formError: null,
       facilitiesError: null,
     };
@@ -138,7 +138,6 @@ export default {
           this.form.capacity = newVal.capacity;
           this.form.description = newVal.description;
           this.form.available = newVal.available;
-          // Isi facility_ids dari fasilitas yang sudah terkait dengan ruangan
           this.form.facility_ids = newVal.facilities
             ? newVal.facilities.map((f) => f.id)
             : [];
@@ -147,10 +146,9 @@ export default {
     },
   },
   async fetch() {
-    // Ambil daftar semua fasilitas untuk checkbox
     try {
-      const response = await this.$axios.$get("/facilities/options"); // Gunakan endpoint options
-      this.allFacilities = response.data; // Asumsi response.data langsung array fasilitas
+      const response = await this.$axios.$get("/facilities/options");
+      this.allFacilities = response.data;
     } catch (e) {
       this.facilitiesError =
         "Gagal memuat daftar fasilitas: " +

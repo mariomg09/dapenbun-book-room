@@ -13,8 +13,7 @@ import DepartmentForm from "~/components/admin/departments/DepartmentForm.vue"; 
 export default {
   name: "AdminDepartmentCreate",
   layout: "default",
-  middleware: ["auth"], // Membutuhkan autentikasi
-  // middleware: ['auth'], // Role admin untuk membuat
+  middleware: ["auth"],
 
   head() {
     return {
@@ -29,7 +28,7 @@ export default {
   methods: {
     departmentCreated() {
       alert("Departemen berhasil ditambahkan!");
-      this.$router.push("/admin/departments"); // Redirect kembali ke daftar departemen
+      this.$router.push("/admin/departments");x
     },
   },
 };

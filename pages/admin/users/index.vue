@@ -82,12 +82,10 @@ export default {
       users: [],
       loading: true,
       error: null,
-      currentPage: 1, // State untuk halaman saat ini
-      perPage: 10, // State untuk item per halaman
-      totalPages: 1, // State untuk total halaman
-      totalItems: 0, // State untuk total item
-      // Anda bisa tambahkan 'filters' object di sini jika ingin ada fitur filter
-      // filters: { name: '', email: '', username: '' },
+      currentPage: 1,
+      perPage: 10,
+      totalPages: 1,
+      totalItems: 0,
     };
   },
 
@@ -103,15 +101,11 @@ export default {
         const params = {
           page: this.currentPage,
           per_page: this.perPage,
-          // ... Anda bisa tambahkan this.filters di sini jika ada
         };
-        // Endpoint GET /api/users
-        // with_relations=true agar roles, department, urusan ikut dimuat
         const response = await this.$axios.$get("/users?with_relations=true", {
           params,
         });
 
-        // Asumsi respons API adalah { status: true, data: { current_page: ..., data: [...], ... } }
         this.users = response.data.data;
         this.currentPage = response.data.current_page;
         this.perPage = response.data.per_page;
@@ -127,16 +121,12 @@ export default {
         this.loading = false;
       }
     },
-    // Metode untuk navigasi paginasi
     goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
-        this.fetchUsers(); // Panggil ulang fetch data untuk halaman baru
+        this.fetchUsers();
       }
     },
-    // Jika Anda menambahkan filter, Anda juga akan memiliki metode applyFilters dan resetFilters
-    // applyFilters() { this.currentPage = 1; this.fetchUsers(); },
-    // resetFilters() { this.filters = {}; this.currentPage = 1; this.fetchUsers(); },
   },
 };
 </script>

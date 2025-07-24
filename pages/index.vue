@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"; // Import mapGetters
+import { mapGetters } from "vuex";
 
 export default {
   name: "IndexPage",
@@ -122,7 +122,6 @@ export default {
     },
   },
 
-  // Tambahkan ini untuk debugging di konsol saat page dimuat
   mounted() {
     console.log("User state in IndexPage:", this.user);
     if (this.user && this.user.roles) {

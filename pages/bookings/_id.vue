@@ -14,12 +14,12 @@
 </template>
 
 <script>
-import BookingForm from "~/components/bookings/BookingForm.vue"; // Import komponen form
+import BookingForm from "~/components/bookings/BookingForm.vue";
 
 export default {
   name: "BookingDetailPage",
   layout: "default",
-  middleware: ["auth"], // Membutuhkan autentikasi
+  middleware: ["auth"],
 
   head() {
     return {
@@ -43,18 +43,17 @@ export default {
     this.loading = true;
     this.error = null;
     try {
-      // Panggil API GET /api/bookings/{id} dengan with_relations=true
       const response = await this.$axios.$get(
         `/bookings/${this.$route.params.id}?with_relations=true`
       );
-      this.booking = response.data; // Pastikan struktur respons sesuai
+      this.booking = response.data;
     } catch (e) {
       this.error =
         e.response?.data?.message ||
         e.message ||
         "Terjadi kesalahan saat memuat data booking.";
       console.error("Error fetching booking detail:", e);
-      this.booking = null; // Reset jika ada error
+      this.booking = null;
     } finally {
       this.loading = false;
     }
@@ -63,7 +62,7 @@ export default {
   methods: {
     bookingUpdated() {
       alert("Booking berhasil diperbarui!");
-      this.$router.push("/my-bookings"); // Redirect kembali ke riwayat booking
+      this.$router.push("/my-bookings");
     },
   },
 };

@@ -159,7 +159,7 @@ export default {
   props: {
     user: {
       type: Object,
-      default: null, // Default null untuk mode tambah
+      default: null,
     },
   },
   data() {
@@ -172,7 +172,7 @@ export default {
         password_confirmation: "",
         department_id: null,
         urusan_id: null,
-        roles: [], // Array untuk menyimpan nama role yang dipilih
+        roles: [],
       },
       departments: [],
       urusans: [],
@@ -197,14 +197,12 @@ export default {
           this.form.email = newVal.email;
           this.form.department_id = newVal.department_id;
           this.form.urusan_id = newVal.urusan_id;
-          // Isi role yang sudah ada di user
           this.form.roles = newVal.roles ? newVal.roles.map((r) => r.name) : [];
         }
       },
     },
   },
   async fetch() {
-    // Ambil daftar departemen untuk dropdown
     try {
       const deptResponse = await this.$axios.$get("/departments");
       this.departments = deptResponse.data.data;
@@ -215,7 +213,6 @@ export default {
       console.error("Error fetching departments for user form:", e);
     }
 
-    // Ambil daftar urusan untuk dropdown
     try {
       const urusanResponse = await this.$axios.$get("/urusan");
       this.urusans = urusanResponse.data.data;
@@ -227,11 +224,10 @@ export default {
       console.error("Error fetching urusans for user form:", e);
     }
 
-    // Ambil daftar semua roles untuk checkbox
     this.loadingRoles = true;
     this.rolesError = null;
     try {
-      const roleResponse = await this.$axios.$get("/roles"); // Mengambil semua roles dari API
+      const roleResponse = await this.$axios.$get("/roles");
       this.allRoles = roleResponse.data.data;
     } catch (e) {
       this.rolesError =
@@ -246,11 +242,9 @@ export default {
       this.formError = null;
       try {
         let response;
-        const formData = { ...this.form }; // Salin form data
-        // Hapus password_confirmation karena tidak dikirim ke API
+        const formData = { ...this.form };
         delete formData.password_confirmation;
 
-        // Hapus password jika mode edit dan password kosong
         if (this.isEditing && !formData.password) {
           delete formData.password;
         }

@@ -10,10 +10,6 @@
         Tambah Role Baru
       </NuxtLink>
     </div>
-
-    <!-- Bagian Filter (Opsional, bisa ditambahkan jika ingin ada filter di Role) -->
-    <!-- Anda bisa menyalin dan menyesuaikan bagian filter dari audit-logs/index.vue jika dibutuhkan -->
-
     <div v-if="loading" class="text-center text-gray-600">Memuat role...</div>
     <div v-else-if="error" class="text-center text-red-600">
       Gagal memuat role: {{ error }}
@@ -24,7 +20,6 @@
     <div v-else>
       <RoleTable :roles="roles" @roleDeleted="fetchRoles" />
 
-      <!-- Kontrol Pagination -->
       <div class="flex justify-center mt-6">
         <nav
           class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
@@ -70,7 +65,6 @@ export default {
   name: "AdminRoleIndex",
   layout: "default",
   middleware: ["auth"],
-  // middleware: ['auth', 'role:admin'], // Anda bisa aktifkan ini jika hanya admin yang bisa akses
 
   head() {
     return {
@@ -87,12 +81,10 @@ export default {
       roles: [],
       loading: true,
       error: null,
-      currentPage: 1, // State untuk halaman saat ini
-      perPage: 10, // State untuk item per halaman
-      totalPages: 1, // State untuk total halaman
-      totalItems: 0, // State untuk total item
-      // Anda bisa tambahkan 'filters' object di sini jika ingin ada fitur filter
-      // filters: { name: '' },
+      currentPage: 1,
+      perPage: 10,
+      totalPages: 1,
+      totalItems: 0,
     };
   },
 
@@ -108,11 +100,9 @@ export default {
         const params = {
           page: this.currentPage,
           per_page: this.perPage,
-          // ... Anda bisa tambahkan this.filters di sini jika ada
         };
         const response = await this.$axios.$get("/roles", { params }); // Endpoint GET /api/roles
 
-        // Asumsi respons API adalah { status: true, data: { current_page: ..., data: [...], ... } }
         this.roles = response.data.data;
         this.currentPage = response.data.current_page;
         this.perPage = response.data.per_page;
@@ -128,16 +118,12 @@ export default {
         this.loading = false;
       }
     },
-    // Metode untuk navigasi paginasi
     goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
-        this.fetchRoles(); // Panggil ulang fetch data untuk halaman baru
+        this.fetchRoles();
       }
     },
-    // Jika Anda menambahkan filter, Anda juga akan memiliki metode applyFilters dan resetFilters
-    // applyFilters() { this.currentPage = 1; this.fetchRoles(); },
-    // resetFilters() { this.filters = {}; this.currentPage = 1; this.fetchRoles(); },
   },
 };
 </script>

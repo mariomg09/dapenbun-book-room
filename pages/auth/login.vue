@@ -81,7 +81,6 @@ export default {
     },
   },
 
-  // Lifecycle hook: Jika user sudah login, arahkan dia ke halaman utama (optional)
   mounted() {
     if (this.$store.getters['auth/isLoggedIn']) {
       this.$router.push('/');

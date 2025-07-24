@@ -17,13 +17,12 @@
 </template>
 
 <script>
-import DepartmentForm from "~/components/admin/departments/DepartmentForm.vue"; // Import komponen form
+import DepartmentForm from "~/components/admin/departments/DepartmentForm.vue";
 
 export default {
   name: "AdminDepartmentEdit",
   layout: "default",
-  middleware: ["auth"], // Membutuhkan autentikasi
-  // middleware: ['auth'], // Role admin untuk mengedit
+  middleware: ["auth"],
 
   head() {
     return {
@@ -49,8 +48,8 @@ export default {
     try {
       const response = await this.$axios.$get(
         `/departments/${this.$route.params.id}`
-      ); // Ambil ID dari URL
-      this.department = response.data; // Sesuaikan dengan struktur respons
+      );
+      this.department = response.data;
     } catch (e) {
       this.error =
         e.response?.data?.message ||
@@ -65,7 +64,7 @@ export default {
   methods: {
     departmentUpdated() {
       alert("Departemen berhasil diperbarui!");
-      this.$router.push("/admin/departments"); // Redirect kembali ke daftar
+      this.$router.push("/admin/departments");
     },
   },
 };

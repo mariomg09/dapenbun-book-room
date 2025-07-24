@@ -47,7 +47,7 @@ export default {
   props: {
     department: {
       type: Object,
-      default: null, // Default null untuk mode tambah
+      default: null,
     },
   },
   data() {
@@ -56,20 +56,18 @@ export default {
         name: '',
         head_id: null,
       },
-      users: [], // Untuk daftar kepala departemen yang mungkin
+      users: [],
       formError: null,
     };
   },
   computed: {
-    // Mengecek apakah form sedang dalam mode edit (jika ada prop department)
     isEditing() {
       return !!this.department;
     },
   },
   watch: {
-    // Memuat data departemen ke form jika prop department berubah (untuk mode edit)
     department: {
-      immediate: true, // Jalankan watcher segera setelah komponen dibuat
+      immediate: true,
       handler(newVal) {
         if (newVal) {
           this.form.name = newVal.name;
@@ -79,10 +77,8 @@ export default {
     },
   },
   async fetch() {
-    // Ambil daftar user untuk dropdown 'Kepala Departemen'
     try {
-      const response = await this.$axios.$get('/users?with_relations=true'); // Ambil semua user, with_relations=true agar roles dimuat
-      // Filter user yang bisa jadi kepala departemen (misal: punya role 'pimpinan' atau 'admin')
+      const response = await this.$axios.$get('/users?with_relations=true'); 
       this.users = response.data.data.filter(user => user.roles && (user.roles.some(role => role.name === 'pimpinan') || user.roles.some(role => role.name === 'admin')));
     } catch (e) {
       this.formError = 'Gagal memuat daftar user untuk kepala departemen: ' + (e.response?.data?.message || e.message);
@@ -99,11 +95,10 @@ export default {
         } else {
           response = await this.$axios.$post('/departments', this.form);
         }
-        this.$emit('formSubmitted'); // Memberi tahu parent bahwa form berhasil disubmit
+        this.$emit('formSubmitted');
       } catch (e) {
         this.formError = e.response?.data?.message || e.message || 'Terjadi kesalahan saat menyimpan departemen.';
         if (e.response?.data?.errors) {
-          // Tampilkan pesan validasi spesifik jika ada
           const errors = Object.values(e.response.data.errors).flat();
           this.formError = errors.join(', ');
         }

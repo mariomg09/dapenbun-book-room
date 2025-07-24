@@ -12,7 +12,6 @@ export default {
   name: "AdminRoleCreate",
   layout: "default",
   middleware: ["auth"],
-  // middleware: ['auth'],
 
   head() {
     return {

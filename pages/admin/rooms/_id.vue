@@ -20,7 +20,6 @@ export default {
   name: "AdminRoomEdit",
   layout: "default",
   middleware: ["auth"],
-  // middleware: ['auth'],
 
   head() {
     return {
@@ -44,7 +43,6 @@ export default {
     this.loading = true;
     this.error = null;
     try {
-      // Panggil API GET /api/rooms/{id} dengan with_relations=true untuk memuat fasilitas
       const response = await this.$axios.$get(
         `/rooms/${this.$route.params.id}?with_relations=true`
       );

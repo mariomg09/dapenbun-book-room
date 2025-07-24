@@ -20,7 +20,6 @@ export default {
   name: "AdminStatusEdit",
   layout: "default",
   middleware: ["auth"],
-  // middleware: ['auth'],
 
   head() {
     return {

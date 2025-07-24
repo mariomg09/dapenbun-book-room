@@ -54,8 +54,8 @@ export default {
   methods: {
     async deleteRole(id) {
       try {
-        await this.$axios.$delete(`/roles/${id}`); // Endpoint DELETE /api/roles/{id}
-        this.$emit('roleDeleted'); // Memberi tahu parent untuk me-refresh daftar
+        await this.$axios.$delete(`/roles/${id}`);
+        this.$emit('roleDeleted');
         alert('Role berhasil dihapus!');
       } catch (e) {
         alert('Gagal menghapus role: ' + (e.response?.data?.message || e.message));

@@ -19,15 +19,37 @@
       Tidak ada status yang ditemukan.
     </div>
     <div v-else>
-      <StatusTable :status="status" @statusDeleted="fetchstatus" /> <div class="flex justify-center mt-6">
-        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-          <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+      <StatusTable :status="status" @statusDeleted="fetchstatus" />
+      <div class="flex justify-center mt-6">
+        <nav
+          class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+          aria-label="Pagination"
+        >
+          <button
+            @click="goToPage(currentPage - 1)"
+            :disabled="currentPage === 1"
+            class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+          >
             Sebelumnya
           </button>
-          <button v-for="page in totalPages" :key="page" @click="goToPage(page)" :class="[page === currentPage ? 'bg-blue-500 text-white' : 'bg-white text-gray-700', 'relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium hover:bg-gray-50']">
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            @click="goToPage(page)"
+            :class="[
+              page === currentPage
+                ? 'bg-blue-500 text-white'
+                : 'bg-white text-gray-700',
+              'relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium hover:bg-gray-50',
+            ]"
+          >
             {{ page }}
           </button>
-          <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+          <button
+            @click="goToPage(currentPage + 1)"
+            :disabled="currentPage === totalPages"
+            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+          >
             Selanjutnya
           </button>
         </nav>
@@ -56,15 +78,13 @@ export default {
 
   data() {
     return {
-      status: [], // Tetap 'status' (singular) sesuai keinginan Anda
+      status: [],
       loading: true,
       error: null,
-      currentPage: 1, // State untuk halaman saat ini
-      perPage: 10,    // State untuk item per halaman
-      totalPages: 1,  // State untuk total halaman
-      totalItems: 0,  // State untuk total item
-      // Anda bisa tambahkan 'filters' object di sini jika ingin ada fitur filter
-      // filters: { name: '' },
+      currentPage: 1,
+      perPage: 10,
+      totalPages: 1,
+      totalItems: 0,
     };
   },
 
@@ -73,24 +93,21 @@ export default {
   },
 
   methods: {
-    async fetchstatus() { // Tetap 'fetchstatus' (singular)
+    async fetchstatus() {
       this.loading = true;
       this.error = null;
       try {
         const params = {
           page: this.currentPage,
           per_page: this.perPage,
-          // ... Anda bisa tambahkan this.filters di sini jika ada
         };
-        const response = await this.$axios.$get("/status", { params }); // Endpoint GET /api/status
-        
-        // Asumsi respons API adalah { status: true, data: { current_page: ..., data: [...], ... } }
-        this.status = response.data.data; // Akses response.data.data (ini adalah array item)
+        const response = await this.$axios.$get("/status", { params });
+
+        this.status = response.data.data;
         this.currentPage = response.data.current_page;
         this.perPage = response.data.per_page;
         this.totalPages = response.data.last_page;
         this.totalItems = response.data.total;
-
       } catch (e) {
         this.error =
           e.response?.data?.message ||
@@ -101,14 +118,12 @@ export default {
         this.loading = false;
       }
     },
-    // Metode untuk navigasi paginasi
     goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
-        this.fetchstatus(); // Panggil ulang fetch data untuk halaman baru
+        this.fetchstatus();
       }
     },
-    // Metode filter dan reset jika ditambahkan
     applyFilters() {
       this.currentPage = 1;
       this.fetchstatus();

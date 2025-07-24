@@ -68,7 +68,7 @@ import { mapGetters } from "vuex";
 export default {
   name: "MyBookingsIndexPage",
   layout: "default",
-  middleware: ["auth"], // Pastikan user harus login untuk melihat halaman ini
+  middleware: ["auth"],
 
   head() {
     return {
@@ -85,17 +85,15 @@ export default {
       bookings: [],
       loading: true,
       error: null,
-      currentPage: 1, // State untuk halaman saat ini
-      perPage: 10, // State untuk item per halaman
-      totalPages: 1, // State untuk total halaman
-      totalItems: 0, // State untuk total item
-      // Anda bisa tambahkan 'filters' object di sini jika ingin ada fitur filter
-      // filters: { status_id: null }, // Contoh: filter booking saya berdasarkan status
+      currentPage: 1,
+      perPage: 10,
+      totalPages: 1,
+      totalItems: 0,
     };
   },
 
   computed: {
-    ...mapGetters("auth", ["user"]), // Ambil user dari store auth
+    ...mapGetters("auth", ["user"]),
   },
 
   async fetch() {
@@ -115,8 +113,7 @@ export default {
         const params = {
           page: this.currentPage,
           per_page: this.perPage,
-          user_id: userId, // Filter berdasarkan user ID yang login
-          // ... Anda bisa tambahkan this.filters di sini jika ada
+          user_id: userId,
         };
 
         const response = await this.$axios.$get(
@@ -138,11 +135,10 @@ export default {
         this.loading = false;
       }
     },
-    // Metode untuk navigasi paginasi
     goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
-        this.fetchMyBookings(); // Panggil ulang fetch data untuk halaman baru
+        this.fetchMyBookings();
       }
     },
   },

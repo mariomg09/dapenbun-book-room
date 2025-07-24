@@ -44,14 +44,14 @@ export default {
   props: {
     role: {
       type: Object,
-      default: null, // Default null untuk mode tambah
+      default: null,
     },
   },
   data() {
     return {
       form: {
         name: '',
-        guard_name: 'api', // Default guard_name
+        guard_name: 'api',
       },
       formError: null,
     };

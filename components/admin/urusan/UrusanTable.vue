@@ -62,7 +62,7 @@ export default {
   methods: {
     async deleteUrusan(id) {
       try {
-        await this.$axios.$delete(`/urusan/${id}`); // Perhatikan URL: /urusan (singular)
+        await this.$axios.$delete(`/urusan/${id}`);
         this.$emit('urusanDeleted');
         alert('Urusan berhasil dihapus!');
       } catch (e) {

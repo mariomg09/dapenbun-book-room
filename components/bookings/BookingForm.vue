@@ -113,7 +113,7 @@ export default {
   props: {
     booking: {
       type: Object,
-      default: null, // Default null untuk mode buat baru
+      default: null,
     },
   },
   data() {
@@ -126,7 +126,7 @@ export default {
         participants: 1,
         information: "",
       },
-      rooms: [], // Daftar ruangan untuk dropdown
+      rooms: [],
       formError: null,
     };
   },
@@ -142,7 +142,6 @@ export default {
         if (newVal) {
           this.form.title = newVal.title;
           this.form.room_id = newVal.room_id;
-          // Format waktu dari backend (YYYY-MM-DD HH:MM:SS) ke format input datetime-local (YYYY-MM-DDTHH:mm)
           this.form.start_time = newVal.start_time
             ? this.formatToDateTimeLocalInput(newVal.start_time)
             : "";
@@ -152,7 +151,6 @@ export default {
           this.form.participants = newVal.participants;
           this.form.information = newVal.information;
         } else {
-          // Reset form untuk mode buat baru
           this.form = {
             title: "",
             room_id: null,
@@ -166,7 +164,6 @@ export default {
     },
   },
   async fetch() {
-    // Ambil daftar ruangan untuk dropdown
     try {
       const response = await this.$axios.$get("/rooms?with_relations=true");
       this.rooms = response.data.data;
@@ -178,11 +175,8 @@ export default {
     }
   },
   methods: {
-    // Metode baru untuk memformat waktu dari backend ke format input datetime-local
     formatToDateTimeLocalInput(isoString) {
       if (!isoString) return "";
-      // Pastikan string datetime dari backend tidak ada 'Z' jika itu ISO, atau langsung format
-      // Contoh: "2025-07-10 10:30:00" -> "2025-07-10T10:30"
       const date = new Date(isoString);
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -191,20 +185,15 @@ export default {
       const minutes = String(date.getMinutes()).padStart(2, "0");
       return `${year}-${month}-${day}T${hours}:${minutes}`;
     },
-    // Metode baru untuk memformat waktu dari input datetime-local ke format backend (YYYY-MM-DD HH:MM:SS)
     formatToBackendDateTime(localDateTimeString) {
       if (!localDateTimeString) return "";
-      // Contoh: "2025-07-10T10:30" -> "2025-07-10 10:30:00"
-      return localDateTimeString.replace("T", " ") + ":00"; // Tambahkan detik '00'
+      return localDateTimeString.replace("T", " ") + ":00";
     },
     async submitForm() {
       this.formError = null;
       try {
-        // --- PERBAIKAN PENTING DI SINI ---
-        // Buat objek form data yang akan dikirim ke API
         const dataToSend = {
           ...this.form,
-          // Format ulang start_time dan end_time ke format yang diharapkan backend
           start_time: this.formatToBackendDateTime(this.form.start_time),
           end_time: this.formatToBackendDateTime(this.form.end_time),
         };
@@ -218,7 +207,7 @@ export default {
         } else {
           response = await this.$axios.$post("/bookings", dataToSend);
         }
-        this.$emit("formSubmitted"); // Beri tahu parent bahwa form berhasil disubmit
+        this.$emit("formSubmitted");
       } catch (e) {
         this.formError =
           e.response?.data?.message ||

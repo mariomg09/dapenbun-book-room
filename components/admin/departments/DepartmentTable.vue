@@ -65,7 +65,7 @@ export default {
     async deleteDepartment(id) {
       try {
         await this.$axios.$delete(`/departments/${id}`);
-        this.$emit("departmentDeleted"); // Memberi tahu parent untuk me-refresh daftar
+        this.$emit("departmentDeleted");
         alert("Departemen berhasil dihapus!");
       } catch (e) {
         alert(

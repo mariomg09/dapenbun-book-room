@@ -11,7 +11,7 @@ import UserForm from "~/components/admin/users/UserForm.vue";
 export default {
   name: "AdminUserCreate",
   layout: "default",
-  middleware: ["auth"], // Membutuhkan autentikasi dan role admin
+  middleware: ["auth"],
 
   head() {
     return {
@@ -26,7 +26,7 @@ export default {
   methods: {
     userCreated() {
       alert("User berhasil ditambahkan!");
-      this.$router.push("/admin/users"); // Redirect kembali ke daftar user
+      this.$router.push("/admin/users");
     },
   },
 };

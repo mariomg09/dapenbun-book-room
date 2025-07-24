@@ -19,7 +19,7 @@ import UserForm from "~/components/admin/users/UserForm.vue";
 export default {
   name: "AdminUserEdit",
   layout: "default",
-  middleware: ["auth"], // Membutuhkan autentikasi dan role admin
+  middleware: ["auth"],
 
   head() {
     return {
@@ -43,8 +43,6 @@ export default {
     this.loading = true;
     this.error = null;
     try {
-      // Endpoint GET /api/users/{id}
-      // with_relations=true agar roles, department, urusan ikut dimuat
       const response = await this.$axios.$get(
         `/users/${this.$route.params.id}?with_relations=true`
       );

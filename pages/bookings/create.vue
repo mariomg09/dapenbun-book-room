@@ -26,7 +26,7 @@ export default {
   methods: {
     bookingCreated() {
       alert("Booking berhasil dibuat dan menunggu persetujuan!");
-      this.$router.push("/my-bookings"); // Redirect kembali ke riwayat booking
+      this.$router.push("/my-bookings");
     },
   },
 };

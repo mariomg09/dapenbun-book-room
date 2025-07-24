@@ -41,7 +41,7 @@ export default {
   props: {
     facility: {
       type: Object,
-      default: null, // Default null untuk mode tambah
+      default: null,
     },
   },
   data() {

@@ -112,9 +112,6 @@ export default {
   },
   computed: {
     ...mapGetters("auth", ["user", "hasRole"]),
-
-    // Pastikan ID status sudah di-hardcode di sini juga jika tidak diambil dari API/Vuex Store
-    // Atau ambil dari cache/Vuex Store saat aplikasi dimuat
     pendingStatusId() {
       return 1;
     },
@@ -163,20 +160,16 @@ export default {
 
       return (isMyBooking && isNotFinal) || isAdmin;
     },
-    // Menentukan apakah tombol Approve/Reject harus muncul di frontend
-    // Logika ini harus konsisten dengan Policy backend Anda untuk approve/reject
     canApproveRejectButton(booking) {
       const isPurePimpinan = this.hasRole("pimpinan") && !this.hasRole("HR");
       const isCombinedHRandPimpinan =
         this.hasRole("pimpinan") && this.hasRole("HR");
-      const isHR = this.hasRole("HR"); // Check for pure HR too, as they might have view access but no approval permission
+      const isHR = this.hasRole("HR");
 
       const bookingStatusName = booking.status ? booking.status.name : "";
 
-      // Admin selalu bisa approve/reject
       if (this.hasRole("admin")) return true;
 
-      // Pengecekan umum: tidak bisa approve/reject jika sudah final
       if (
         bookingStatusName === "approved" ||
         bookingStatusName === "rejected"
@@ -184,30 +177,24 @@ export default {
         return false;
       }
 
-      // Logika sesuai dengan Policy:
-      // Gabungan HR+Pimpinan
       if (isCombinedHRandPimpinan) {
         const currentUserDeptId = this.user ? this.user.department_id : null;
         const bookingUserDeptId = booking.user
           ? booking.user.department_id
           : null;
 
-        // Jika departemen sama: bisa pending atau pimpinan_approved
         if (currentUserDeptId === bookingUserDeptId) {
           return (
             bookingStatusName === "pending" ||
             bookingStatusName === "pimpinan_approved"
           );
         }
-        // Jika departemen berbeda: hanya bisa pimpinan_approved
         else {
           return bookingStatusName === "pimpinan_approved";
         }
       }
 
-      // Pimpinan Murni
       if (isPurePimpinan) {
-        // Hanya bisa pending dan harus satu departemen
         const currentUserDeptId = this.user ? this.user.department_id : null;
         const bookingUserDeptId = booking.user
           ? booking.user.department_id
@@ -218,19 +205,17 @@ export default {
         );
       }
 
-      // HR Murni: Policy kita melarang HR murni untuk approve/reject
       if (isHR && !isPurePimpinan) {
-        // hasRole('HR') tapi bukan pimpinan murni
         return false;
       }
 
-      return false; // Default: tidak tampilkan tombol
+      return false;
     },
     async deleteBooking(id) {
       if (!confirm("Apakah Anda yakin ingin menghapus booking ini?")) return;
       try {
         await this.$axios.$delete(`/bookings/${id}`);
-        this.$emit("bookingDeleted"); // Memberi tahu parent untuk me-refresh daftar
+        this.$emit("bookingDeleted");
         alert("Booking berhasil dihapus!");
       } catch (e) {
         alert(
@@ -243,7 +228,7 @@ export default {
       if (!confirm("Apakah Anda yakin ingin menyetujui booking ini?")) return;
       try {
         await this.$axios.$put(`/bookings/${id}/approve`);
-        this.$emit("bookingDeleted"); // Refresh daftar setelah status berubah
+        this.$emit("bookingDeleted");
         alert("Booking berhasil disetujui!");
       } catch (e) {
         alert(
@@ -257,7 +242,7 @@ export default {
       if (!confirm("Apakah Anda yakin ingin menolak booking ini?")) return;
       try {
         await this.$axios.$put(`/bookings/${id}/reject`);
-        this.$emit("bookingDeleted"); // Refresh daftar setelah status berubah
+        this.$emit("bookingDeleted");
         alert("Booking berhasil ditolak!");
       } catch (e) {
         alert(

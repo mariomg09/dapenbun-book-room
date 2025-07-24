@@ -65,7 +65,7 @@ import BookingTable from "~/components/bookings/BookingTable.vue";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "ApprovalsBookingPage", // Nama halaman untuk antrean persetujuan
+  name: "ApprovalsBookingPage",
   layout: "default",
   middleware: ["auth", "canApproveOrReject"],
 
@@ -81,15 +81,13 @@ export default {
 
   data() {
     return {
-      allBookings: [], // Data booking mentah dari API (pending & pimpinan_approved)
+      allBookings: [],
       loading: true,
       error: null,
-      currentPage: 1, // State untuk halaman saat ini
-      perPage: 10, // State untuk item per halaman
-      totalPages: 1, // State untuk total halaman
-      totalItems: 0, // State untuk total item
-      // Anda bisa tambahkan 'filters' object di sini jika ingin ada fitur filter
-      // filters: { room_id: null, user_id: null },
+      currentPage: 1,
+      perPage: 10,
+      totalPages: 1,
+      totalItems: 0,
     };
   },
 
@@ -167,8 +165,7 @@ export default {
         const params = {
           page: this.currentPage,
           per_page: this.perPage,
-          status_id: `${pendingStatusId},${pimpinanApprovedStatusId}`, // Filter status di backend
-          // ... Anda bisa tambahkan this.filters di sini jika ada
+          status_id: `${pendingStatusId},${pimpinanApprovedStatusId}`,
         };
 
         const response = await this.$axios.$get(
@@ -190,16 +187,12 @@ export default {
         this.loading = false;
       }
     },
-    // Metode untuk navigasi paginasi
     goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
         this.fetchApprovalBookings();
       }
     },
-    // Jika Anda menambahkan filter, Anda juga akan memiliki metode applyFilters dan resetFilters
-    // applyFilters() { this.currentPage = 1; this.fetchApprovalBookings(); },
-    // resetFilters() { this.filters = {}; this.currentPage = 1; this.fetchApprovalBookings(); },
   },
 };
 </script>

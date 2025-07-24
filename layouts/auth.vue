@@ -11,6 +11,4 @@ export default {
 </script>
 
 <style>
-/* Styling global jika ada, atau bisa dikosongkan jika Tailwind sudah cukup */
-/* Anda bisa tambahkan font-family, dll. yang relevan */
 </style>

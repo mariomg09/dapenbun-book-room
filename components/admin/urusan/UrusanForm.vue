@@ -75,7 +75,7 @@ export default {
   props: {
     urusan: {
       type: Object,
-      default: null, // Default null untuk mode tambah
+      default: null,
     },
   },
   data() {
@@ -85,8 +85,8 @@ export default {
         department_id: null,
         head_id: null,
       },
-      departments: [], // Untuk daftar departemen
-      users: [], // Untuk daftar user (kepala urusan)
+      departments: [],
+      users: [],
       formError: null,
     };
   },
@@ -108,9 +108,8 @@ export default {
     },
   },
   async fetch() {
-    // Ambil daftar departemen untuk dropdown
     try {
-      const deptResponse = await this.$axios.$get("/departments"); // Ganti dengan endpoint options jika ada
+      const deptResponse = await this.$axios.$get("/departments");
       this.departments = deptResponse.data.data;
     } catch (e) {
       this.formError =
@@ -119,7 +118,6 @@ export default {
       console.error("Error fetching departments for dropdown:", e);
     }
 
-    // Ambil daftar user untuk dropdown 'Kepala Urusan'
     try {
       const userResponse = await this.$axios.$get("/users?with_relations=true");
       this.users = userResponse.data.data.filter(
@@ -145,7 +143,7 @@ export default {
           response = await this.$axios.$put(
             `/urusan/${this.urusan.id}`,
             this.form
-          ); // Perhatikan URL: /urusan (singular)
+          );
         } else {
           response = await this.$axios.$post("/urusan", this.form); // Perhatikan URL: /urusan (singular)
         }

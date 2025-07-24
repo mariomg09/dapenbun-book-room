@@ -58,7 +58,7 @@ import BookingTable from "~/components/bookings/BookingTable.vue";
 export default {
   name: "GeneralBookingsIndexPage",
   layout: "default",
-  middleware: ["auth"], // Halaman ini membutuhkan login
+  middleware: ["auth"],
 
   head() {
     return {
@@ -75,12 +75,11 @@ export default {
       bookings: [],
       loading: true,
       error: null,
-      currentPage: 1, // State untuk halaman saat ini
-      perPage: 10, // State untuk item per halaman
-      totalPages: 1, // State untuk total halaman
-      totalItems: 0, // State untuk total item
-      // Anda bisa tambahkan 'filters' object di sini jika ingin ada fitur filter
-      // filters: { title: '', room_id: null, status_id: null },
+      currentPage: 1,
+      perPage: 10,
+      totalPages: 1,
+      totalItems: 0,
+
     };
   },
 
@@ -96,15 +95,12 @@ export default {
         const params = {
           page: this.currentPage,
           per_page: this.perPage,
-          // ... Anda bisa tambahkan this.filters di sini jika ada
         };
-        // Panggil API GET /api/bookings untuk semua booking
         const response = await this.$axios.$get(
           "/bookings?with_relations=true",
           { params }
         );
 
-        // Asumsi respons API adalah { status: true, data: { current_page: ..., data: [...], ... } }
         this.bookings = response.data.data;
         this.currentPage = response.data.current_page;
         this.perPage = response.data.per_page;
@@ -120,16 +116,13 @@ export default {
         this.loading = false;
       }
     },
-    // Metode untuk navigasi paginasi
     goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
-        this.fetchBookings(); // Panggil ulang fetch data untuk halaman baru
+        this.fetchBookings();
       }
     },
-    // Jika Anda menambahkan filter, Anda juga akan memiliki metode applyFilters dan resetFilters
-    // applyFilters() { this.currentPage = 1; this.fetchBookings(); },
-    // resetFilters() { this.filters = {}; this.currentPage = 1; this.fetchBookings(); },
+
   },
 };
 </script>

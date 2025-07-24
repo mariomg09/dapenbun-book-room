@@ -68,6 +68,5 @@ html {
 *::after {
   box-sizing: border-box;
   margin: 0;
-  /* Hapus padding: 0; di sini agar p-4 di main dan header bisa bekerja */
 }
 </style>
