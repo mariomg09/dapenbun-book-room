@@ -172,10 +172,10 @@ export default {
           params,
         });
         this.auditLogs = response.data.data;
-        this.currentPage = response.current_page;
-        this.perPage = response.per_page;
-        this.totalPages = response.last_page;
-        this.totalItems = response.total;
+        this.currentPage = response.data.current_page;
+        this.perPage = response.data.per_page;
+        this.totalPages = response.data.last_page;
+        this.totalItems = response.data.total;
       } catch (e) {
         this.error =
           e.response?.data?.message ||
