@@ -11,8 +11,69 @@
       </NuxtLink>
     </div>
 
-    <!-- Bagian Filter (Opsional, bisa ditambahkan jika ingin ada filter di Ruangan) -->
-    <!-- Anda bisa menyalin dan menyesuaikan bagian filter dari audit-logs/index.vue jika dibutuhkan -->
+    <div class="bg-white p-4 rounded-lg shadow-md mb-6">
+      <h3 class="text-lg font-semibold mb-3">Filter Ruangan</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div>
+          <label
+            for="filter-capacity"
+            class="block text-sm font-medium text-gray-700"
+            >Kapasitas:</label
+          >
+          <input
+            type="number"
+            v-model.number="filters.capacity"
+            id="filter-capacity"
+            placeholder="Filter kapasitas..."
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+          />
+        </div>
+        <div>
+          <label
+            for="filter-available"
+            class="block text-sm font-medium text-gray-700"
+            >Ketersediaan:</label
+          >
+          <select
+            v-model="filters.available"
+            id="filter-available"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+          >
+            <option :value="null">-- Semua Status --</option>
+            <option :value="true">Tersedia</option>
+            <option :value="false">Tidak Tersedia</option>
+          </select>
+        </div>
+        <div>
+          <label
+            for="filter-search-all"
+            class="block text-sm font-medium text-gray-700"
+            >Cari Umum:</label
+          >
+          <input
+            type="text"
+            v-model="filters.search"
+            id="filter-search-all"
+            placeholder="Cari nama/deskripsi..."
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+          />
+        </div>
+      </div>
+      <div class="flex justify-end mt-4">
+        <button
+          @click="applyFilters"
+          class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200"
+        >
+          Terapkan Filter
+        </button>
+        <button
+          @click="resetFilters"
+          class="ml-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded transition duration-200"
+        >
+          Reset
+        </button>
+      </div>
+    </div>
 
     <div v-if="loading" class="text-center text-gray-600">
       Memuat ruangan...
@@ -26,7 +87,6 @@
     <div v-else>
       <RoomTable :rooms="rooms" @roomDeleted="fetchRooms" />
 
-      <!-- Kontrol Pagination -->
       <div class="flex justify-center mt-6">
         <nav
           class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
@@ -72,6 +132,7 @@ export default {
   name: "AdminRoomIndex",
   layout: "default",
   middleware: ["auth"],
+  // middleware: ['auth', 'role:admin'], // Anda bisa aktifkan ini jika hanya admin yang bisa akses
 
   head() {
     return {
@@ -92,6 +153,14 @@ export default {
       perPage: 10,
       totalPages: 1,
       totalItems: 0,
+      // --- TAMBAHAN FILTER ---
+      filters: {
+        name: "",
+        capacity: null,
+        available: null, // Menggunakan null untuk "Semua Status"
+        search: "", // Untuk search di name dan description
+      },
+      // --- AKHIR TAMBAHAN FILTER ---
     };
   },
 
@@ -107,11 +176,15 @@ export default {
         const params = {
           page: this.currentPage,
           per_page: this.perPage,
+          // Gabungkan filter ke params
+          ...this.filters,
         };
+        // Panggil API GET /api/rooms dengan with_relations=true untuk memuat fasilitas
         const response = await this.$axios.$get("/rooms?with_relations=true", {
           params,
         });
 
+        // Asumsi respons API adalah { status: true, data: { current_page: ..., data: [...], ... } }
         this.rooms = response.data.data;
         this.currentPage = response.data.current_page;
         this.perPage = response.data.per_page;
@@ -127,11 +200,28 @@ export default {
         this.loading = false;
       }
     },
+    // Metode untuk navigasi paginasi
     goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
-        this.fetchRooms();
+        this.fetchRooms(); // Panggil ulang fetch data untuk halaman baru
       }
+    },
+    // Metode untuk menerapkan filter
+    applyFilters() {
+      this.currentPage = 1; // Reset ke halaman pertama saat filter diterapkan
+      this.fetchRooms();
+    },
+    // Metode untuk mereset filter
+    resetFilters() {
+      this.filters = {
+        name: "",
+        capacity: null,
+        available: null,
+        search: "",
+      };
+      this.currentPage = 1; // Reset ke halaman pertama
+      this.fetchRooms();
     },
   },
 };

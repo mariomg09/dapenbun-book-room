@@ -36,14 +36,14 @@
 
     <div class="mb-6">
       <label for="head_id" class="block text-gray-700 text-sm font-bold mb-2"
-        >Kepala Urusan:</label
+        >Kepala Departemen:</label
       >
       <select
         v-model="form.head_id"
         id="head_id"
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
       >
-        <option :value="null">-- Pilih Kepala Urusan --</option>
+        <option :value="null">-- Pilih Kepala Departemen --</option>
         <option v-for="user in users" :key="user.id" :value="user.id">
           {{ user.name }} ({{ user.username }})
         </option>

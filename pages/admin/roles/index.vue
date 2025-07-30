@@ -101,7 +101,7 @@ export default {
           page: this.currentPage,
           per_page: this.perPage,
         };
-        const response = await this.$axios.$get("/roles", { params }); // Endpoint GET /api/roles
+        const response = await this.$axios.$get("/roles", { params });
 
         this.roles = response.data.data;
         this.currentPage = response.data.current_page;
