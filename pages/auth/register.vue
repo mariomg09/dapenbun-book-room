@@ -145,11 +145,11 @@ export default {
         email: "",
         password: "",
         password_confirmation: "",
-        roles: ["user"], // Default: Beri role 'user' secara otomatis jika tidak memilih
+        roles: ["user"],
       },
-      allRoles: [], // Untuk daftar semua roles yang bisa dipilih
-      loadingRoles: true, // Status loading roles
-      rolesError: null, // Error jika gagal memuat roles
+      allRoles: [],
+      loadingRoles: true,
+      rolesError: null,
       registerError: null,
       registerSuccess: null,
     };

@@ -43,40 +43,6 @@
     </div>
 
     <div class="mb-4">
-      <label for="password" class="block text-gray-700 text-sm font-bold mb-2"
-        >Password:</label
-      >
-      <input
-        v-model="form.password"
-        type="password"
-        id="password"
-        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        :required="!isEditing"
-      />
-      <p v-if="isEditing" class="text-sm text-gray-500 mt-1">
-        Kosongkan jika tidak ingin mengubah password.
-      </p>
-    </div>
-
-    <div class="mb-4">
-      <label
-        for="password_confirmation"
-        class="block text-gray-700 text-sm font-bold mb-2"
-        >Konfirmasi Password:</label
-      >
-      <input
-        v-model="form.password_confirmation"
-        type="password"
-        id="password_confirmation"
-        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        :required="!isEditing && !!form.password"
-      />
-      <p v-if="isEditing && form.password" class="text-sm text-gray-500 mt-1">
-        Isi jika mengubah password.
-      </p>
-    </div>
-
-    <div class="mb-4">
       <label
         for="department_id"
         class="block text-gray-700 text-sm font-bold mb-2"
@@ -168,8 +134,7 @@ export default {
         name: "",
         username: "",
         email: "",
-        password: "",
-        password_confirmation: "",
+        // Password dihapus dari form data
         department_id: null,
         urusan_id: null,
         roles: [],
@@ -204,8 +169,10 @@ export default {
   },
   async fetch() {
     try {
-      const deptResponse = await this.$axios.$get("/departments");
-      this.departments = deptResponse.data.data;
+      const deptResponse = await this.$axios.$get(
+        "/departments?no_pagination=true"
+      );
+      this.departments = deptResponse.data; // Akses langsung response.data karena tanpa paginasi
     } catch (e) {
       this.formError =
         "Gagal memuat daftar departemen: " +
@@ -214,8 +181,10 @@ export default {
     }
 
     try {
-      const urusanResponse = await this.$axios.$get("/urusan");
-      this.urusans = urusanResponse.data.data;
+      const urusanResponse = await this.$axios.$get(
+        "/urusan?no_pagination=true"
+      );
+      this.urusans = urusanResponse.data; // Akses langsung response.data karena tanpa paginasi
     } catch (e) {
       this.formError =
         (this.formError ? this.formError + ", " : "") +
@@ -243,15 +212,14 @@ export default {
       try {
         let response;
         const formData = { ...this.form };
-        delete formData.password_confirmation;
 
-        if (this.isEditing && !formData.password) {
-          delete formData.password;
-        }
+        // Hapus password_confirmation dari formData karena tidak diperlukan
+        delete formData.password_confirmation;
 
         if (this.isEditing) {
           response = await this.$axios.$put(`/users/${this.user.id}`, formData);
         } else {
+          // Logika default password harus di backend
           response = await this.$axios.$post("/users", formData);
         }
         this.$emit("formSubmitted");

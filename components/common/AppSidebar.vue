@@ -10,11 +10,17 @@
       <ul class="space-y-2 px-2">
         <SidebarLink to="/" icon="HomeIcon" text="Beranda" />
         <SidebarLink
+          to="/bookings/schedule"
+          icon="CalendarIcon"
+          text="Jadwal Harian"
+        />
+        <SidebarLink
           v-if="isLoggedIn"
           to="/my-bookings"
           icon="CalendarIcon"
           text="Booking Saya"
         />
+
         <SidebarLink
           v-if="canApproveOrReject"
           to="/approvals/bookings"
@@ -31,8 +37,17 @@
           <SettingsIcon v-else class="icon" :class="iconSize" />
         </li>
 
+        <li
+          v-if="hasRole('HR') && hasRole('pimpinan')"
+          :class="{ 'flex justify-center': !isSidebarOpen }"
+          class="text-gray-400 text-sm uppercase pt-2 pb-1"
+        >
+          <span v-if="isSidebarOpen" class="pl-2">HR Panel</span>
+          <SettingsIcon v-else class="icon" :class="iconSize" />
+        </li>
+
         <SidebarLink
-          v-if="hasRole('admin')"
+          v-if="hasRole('admin') || (hasRole('pimpinan') && hasRole('HR'))"
           to="/admin/bookings"
           icon="CalendarIcon"
           text="Manajemen Booking"
@@ -62,13 +77,13 @@
           text="Urusan"
         />
         <SidebarLink
-          v-if="hasRole('admin')"
+          v-if="hasRole('admin') || (hasRole('pimpinan') && hasRole('HR'))"
           to="/admin/facilities"
           icon="TvIcon"
           text="Fasilitas"
         />
         <SidebarLink
-          v-if="hasRole('admin')"
+          v-if="hasRole('admin') || (hasRole('pimpinan') && hasRole('HR'))"
           to="/admin/rooms"
           icon="GridIcon"
           text="Ruangan"
@@ -80,7 +95,7 @@
           text="Status"
         />
         <SidebarLink
-          v-if="hasRole('admin')"
+          v-if="hasRole('admin') || (hasRole('pimpinan') && hasRole('HR'))"
           to="/admin/audit-logs"
           icon="ClipboardIcon"
           text="Log Audit"

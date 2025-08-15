@@ -157,8 +157,9 @@ export default {
         booking.status.name !== "approved" &&
         booking.status.name !== "rejected";
       const isAdmin = this.hasRole("admin");
+      const isCombinedHRandPimpinan = this.hasRole('pimpinan') && this.hasRole('HR');
 
-      return (isMyBooking && isNotFinal) || isAdmin;
+      return (isMyBooking && isNotFinal) || isAdmin || isCombinedHRandPimpinan;;
     },
     canApproveRejectButton(booking) {
       const isPurePimpinan = this.hasRole("pimpinan") && !this.hasRole("HR");
