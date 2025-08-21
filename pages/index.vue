@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen py-8">
+  <div class="min-h-screen bg-gray-100 py-8">
     <div class="container mx-auto px-4">
       <h2 class="text-3xl font-bold text-center text-blue-800 mb-8">
         Jadwal Ruangan Tersedia
@@ -18,7 +18,7 @@
       </div>
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div
-          v-for="booking in bookings"
+          v-for="booking in sortedBookings"
           :key="booking.id"
           class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500"
         >
@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from "vuex"; // Import mapGetters
 
 export default {
   name: "IndexPage",
@@ -83,12 +83,35 @@ export default {
 
   computed: {
     ...mapGetters("auth", ["isLoggedIn", "user"]),
+
+    sortedBookings() {
+      const toTs = (v) => {
+        const t = new Date(v?.start_time).getTime();
+        return Number.isFinite(t) ? t : Number.POSITIVE_INFINITY;
+      };
+      return [...this.bookings].sort((a, b) => {
+        const ta = toTs(a);
+        const tb = toTs(b);
+        if (ta !== tb) return ta - tb;
+
+        // tie-breaker opsional: urutkan by end_time, lalu title
+        const ea = new Date(a?.end_time).getTime();
+        const eb = new Date(b?.end_time).getTime();
+        if (ea !== eb)
+          return (
+            (Number.isFinite(ea) ? ea : Infinity) -
+            (Number.isFinite(eb) ? eb : Infinity)
+          );
+
+        return String(a?.title ?? "").localeCompare(String(b?.title ?? ""));
+      });
+    },
   },
 
   async fetch() {
     try {
       const response = await this.$axios.$get(
-        "/public/bookings/schedule?with_relations=true"
+        "/public/bookings/all-schedule?with_relations=true"
       );
       this.bookings = response.data.data;
     } catch (e) {
@@ -122,6 +145,7 @@ export default {
     },
   },
 
+  // Tambahkan ini untuk debugging di konsol saat page dimuat
   mounted() {
     console.log("User state in IndexPage:", this.user);
     if (this.user && this.user.roles) {
