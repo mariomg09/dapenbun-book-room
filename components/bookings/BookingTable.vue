@@ -21,6 +21,11 @@
           <th
             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
           >
+            Instansi
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
             Waktu Mulai
           </th>
           <th
@@ -46,6 +51,9 @@
           <td class="px-6 py-4 whitespace-nowrap">{{ booking.title }}</td>
           <td class="px-6 py-4 whitespace-nowrap">
             {{ booking.room ? booking.room.name : "N/A" }}
+          </td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            {{ booking.instansi ? booking.instansi.name : "N/A" }}
           </td>
           <td class="px-6 py-4 whitespace-nowrap">
             {{ formatDateTime(booking.start_time) }}
@@ -157,9 +165,10 @@ export default {
         booking.status.name !== "approved" &&
         booking.status.name !== "rejected";
       const isAdmin = this.hasRole("admin");
-      const isCombinedHRandPimpinan = this.hasRole('pimpinan') && this.hasRole('HR');
+      const isCombinedHRandPimpinan =
+        this.hasRole("pimpinan") && this.hasRole("HR");
 
-      return (isMyBooking && isNotFinal) || isAdmin || isCombinedHRandPimpinan;;
+      return (isMyBooking && isNotFinal) || isAdmin || isCombinedHRandPimpinan;
     },
     canApproveRejectButton(booking) {
       const isPurePimpinan = this.hasRole("pimpinan") && !this.hasRole("HR");
@@ -189,8 +198,7 @@ export default {
             bookingStatusName === "pending" ||
             bookingStatusName === "pimpinan_approved"
           );
-        }
-        else {
+        } else {
           return bookingStatusName === "pimpinan_approved";
         }
       }

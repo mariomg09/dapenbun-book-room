@@ -58,6 +58,27 @@
         required
       />
     </div>
+    <div class="mb-4">
+      <label
+        for="instansi_id"
+        class="block text-gray-700 text-sm font-bold mb-2"
+        >Instansi:</label
+      >
+      <select
+        v-model="form.instansi_id"
+        id="instansi_id"
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        required
+      >
+        <option
+          v-for="instansi in instansis"
+          :key="instansi.id"
+          :value="instansi.id"
+        >
+          {{ instansi.name }}
+        </option>
+      </select>
+    </div>
 
     <div class="mb-4">
       <label
@@ -125,8 +146,10 @@ export default {
         end_time: "",
         participants: 1,
         information: "",
+        instansi_id: null, // <-- TAMBAHKAN INI
       },
       rooms: [],
+      instansis: [], // <-- UBAH INI MENJADI 'instansis' (plural)
       formError: null,
     };
   },
@@ -150,6 +173,7 @@ export default {
             : "";
           this.form.participants = newVal.participants;
           this.form.information = newVal.information;
+          this.form.instansi_id = newVal.instansi_id; // <-- TAMBAHKAN INI
         } else {
           this.form = {
             title: "",
@@ -158,23 +182,55 @@ export default {
             end_time: "",
             participants: 1,
             information: "",
+            instansi_id: null, // <-- TAMBAHKAN INI
           };
+          // Logika default 'Dapenbun'
+          const dapenbun = this.instansis.find(
+            (inst) => inst.name === "Dapenbun"
+          );
+          if (dapenbun) {
+            this.form.instansi_id = dapenbun.id;
+          }
         }
       },
     },
   },
   async fetch() {
     try {
-      const response = await this.$axios.$get("/rooms?with_relations=true");
-      this.rooms = response.data.data;
+      const roomsResponse = await this.$axios.$get(
+        "/rooms?with_relations=true"
+      );
+      this.rooms = roomsResponse.data.data;
     } catch (e) {
       this.formError =
         "Gagal memuat daftar ruangan: " +
         (e.response?.data?.message || e.message);
       console.error("Error fetching rooms for booking form:", e);
     }
+
+    try {
+      const instansiResponse = await this.$axios.$get("/instansi/options");
+      this.instansis = instansiResponse.data; // <-- UBAH INI MENJADI 'instansis' (plural)
+      this.setDefaultInstansi();
+    } catch (e) {
+      this.formError =
+        (this.formError ? this.formError + ", " : "") +
+        "Gagal memuat daftar instansi: " +
+        (e.response?.data?.message || e.message);
+      console.error("Error fetching instansis for booking form:", e);
+    }
   },
   methods: {
+    setDefaultInstansi() {
+      if (!this.isEditing) {
+        const dapenbun = this.instansis.find(
+          (inst) => inst.name === "Dapenbun"
+        );
+        if (dapenbun) {
+          this.form.instansi_id = dapenbun.id;
+        }
+      }
+    },
     formatToDateTimeLocalInput(isoString) {
       if (!isoString) return "";
       const date = new Date(isoString);

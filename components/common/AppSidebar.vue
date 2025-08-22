@@ -77,6 +77,12 @@
           text="Urusan"
         />
         <SidebarLink
+          v-if="hasRole('admin')"
+          to="/admin/instansi"
+          icon="BriefcaseIcon"
+          text="Instansi"
+        />
+        <SidebarLink
           v-if="hasRole('admin') || (hasRole('pimpinan') && hasRole('HR'))"
           to="/admin/facilities"
           icon="TvIcon"
@@ -120,6 +126,7 @@ import {
   CheckCircleIcon,
   ClipboardIcon,
   CheckSquareIcon,
+  BriefcaseIcon,
 } from "vue-feather-icons";
 
 export default {
@@ -159,6 +166,7 @@ export default {
     CheckCircleIcon,
     ClipboardIcon,
     CheckSquareIcon,
+    BriefcaseIcon,
     SidebarLink: {
       props: ["to", "icon", "text"],
       computed: {
@@ -178,6 +186,7 @@ export default {
         CheckCircleIcon,
         ClipboardIcon,
         CheckSquareIcon,
+        BriefcaseIcon,
       },
       render(h) {
         const IconComponent = this.$options.components[this.icon];
