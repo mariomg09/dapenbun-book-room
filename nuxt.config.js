@@ -35,11 +35,11 @@ export default {
   modules: ["@nuxtjs/axios", "@nuxtjs/tailwindcss"],
 
   axios: {
-    baseURL: process.env.API_URL || "http://dpp-starter.test/api",
+    baseURL: process.env.API_URL || "http://dpp-be-project.test/api",
   },
   env: {
     // Ini juga penting untuk baseURL
-    API_URL: process.env.API_URL || "http://dpp-starter.test/api",
+    API_URL: process.env.API_URL || "http://dpp-be-project.test/api",
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
