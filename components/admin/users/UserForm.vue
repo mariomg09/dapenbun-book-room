@@ -70,7 +70,11 @@
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
       >
         <option :value="null">-- Pilih Urusan --</option>
-        <option v-for="urusan in urusans" :key="urusan.id" :value="urusan.id">
+        <option
+          v-for="urusan in filteredUrusans"
+          :key="urusan.id"
+          :value="urusan.id"
+        >
           {{ urusan.name }}
         </option>
       </select>
@@ -134,7 +138,8 @@ export default {
         name: "",
         username: "",
         email: "",
-        // Password dihapus dari form data
+        password: "", // Password dihapus dari frontend
+        password_confirmation: "",
         department_id: null,
         urusan_id: null,
         roles: [],
@@ -151,6 +156,15 @@ export default {
     isEditing() {
       return !!this.user;
     },
+    // --- TAMBAHAN computed property untuk memfilter urusan ---
+    filteredUrusans() {
+      if (!this.form.department_id) {
+        return this.urusans; // Jika tidak ada departemen dipilih, tampilkan semua urusan
+      }
+      return this.urusans.filter(
+        (urusan) => urusan.department_id === this.form.department_id
+      );
+    },
   },
   watch: {
     user: {
@@ -166,13 +180,18 @@ export default {
         }
       },
     },
+    // --- TAMBAHAN watch property untuk mereset urusan_id ---
+    "form.department_id"(newDeptId) {
+      this.form.urusan_id = null; // Reset urusan_id setiap kali departemen berubah
+    },
+    // --- AKHIR TAMBAHAN ---
   },
   async fetch() {
     try {
       const deptResponse = await this.$axios.$get(
         "/departments?no_pagination=true"
       );
-      this.departments = deptResponse.data; // Akses langsung response.data karena tanpa paginasi
+      this.departments = deptResponse.data;
     } catch (e) {
       this.formError =
         "Gagal memuat daftar departemen: " +
@@ -184,7 +203,7 @@ export default {
       const urusanResponse = await this.$axios.$get(
         "/urusan?no_pagination=true"
       );
-      this.urusans = urusanResponse.data; // Akses langsung response.data karena tanpa paginasi
+      this.urusans = urusanResponse.data;
     } catch (e) {
       this.formError =
         (this.formError ? this.formError + ", " : "") +
@@ -212,14 +231,13 @@ export default {
       try {
         let response;
         const formData = { ...this.form };
-
-        // Hapus password_confirmation dari formData karena tidak diperlukan
         delete formData.password_confirmation;
-
+        if (this.isEditing && !formData.password) {
+          delete formData.password;
+        }
         if (this.isEditing) {
           response = await this.$axios.$put(`/users/${this.user.id}`, formData);
         } else {
-          // Logika default password harus di backend
           response = await this.$axios.$post("/users", formData);
         }
         this.$emit("formSubmitted");

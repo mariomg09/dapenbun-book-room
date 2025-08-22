@@ -1,5 +1,4 @@
 export default function ({ store, $axios }) {
-  // Ketika aplikasi dimuat, cek apakah ada token di localStorage
   if (process.client) {
     const token = localStorage.getItem("auth_token");
 
